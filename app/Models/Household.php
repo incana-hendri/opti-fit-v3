@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\MembershipStatus;
+use App\Support\Period;
 use Database\Factories\HouseholdFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,6 +49,47 @@ class Household extends Model
     public function activeMembers(): HasMany
     {
         return $this->members()->whereNull('archived_at');
+    }
+
+    /**
+     * @return HasMany<Membership, $this>
+     */
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    /**
+     * @return HasMany<CreditEntry, $this>
+     */
+    public function creditEntries(): HasMany
+    {
+        return $this->hasMany(CreditEntry::class);
+    }
+
+    /**
+     * BR-4.1: the one active or paused membership that covers $period (default: the current one).
+     */
+    public function membershipInEffect(?string $period = null): ?Membership
+    {
+        return $this->memberships()->inEffect($period ?? Period::current())->first();
+    }
+
+    /**
+     * BR-4.7: an approved membership that starts next period, replacing the one in effect.
+     */
+    public function scheduledMembership(): ?Membership
+    {
+        return $this->memberships()
+            ->where('status', MembershipStatus::Active)
+            ->where('starts_period', '>', Period::current())
+            ->first();
+    }
+
+    // BR-4.1: at most one membership is requested at a time.
+    public function pendingRequest(): ?Membership
+    {
+        return $this->memberships()->where('status', MembershipStatus::Requested)->first();
     }
 
     public function hasEmergencyContact(): bool
