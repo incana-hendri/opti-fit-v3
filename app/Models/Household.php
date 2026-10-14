@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * An account holder and their family members (BR-2.1). Owns the credit balance.
+ *
+ * @property int|null $current_balance only present when loaded with withSum(), e.g. in the admin list
  */
 class Household extends Model
 {
@@ -65,6 +67,16 @@ class Household extends Model
     public function creditEntries(): HasMany
     {
         return $this->hasMany(CreditEntry::class);
+    }
+
+    /**
+     * The memberships in effect this period (BR-4.1), for eager loading in lists.
+     *
+     * @return HasMany<Membership, $this>
+     */
+    public function membershipsInEffect(): HasMany
+    {
+        return $this->memberships()->inEffect(Period::current());
     }
 
     /**

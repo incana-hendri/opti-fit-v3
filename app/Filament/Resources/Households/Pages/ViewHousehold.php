@@ -13,7 +13,7 @@ class ViewHousehold extends ViewRecord
 {
     protected static string $resource = HouseholdResource::class;
 
-    // docs/05: Overview and Members (later also Credits, Bookings, Memberships) as tabs.
+    // docs/05: Overview, Members, Credits and Memberships as tabs (Bookings arrive in Milestone 3).
     public function hasCombinedRelationManagerTabsWithContent(): bool
     {
         return true;
