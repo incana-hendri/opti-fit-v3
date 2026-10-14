@@ -131,6 +131,18 @@ Documentation lives in a few fixed places. Keep each one true, and don't add new
 - Comments explain *why*, never *what*. Don't write PHPDoc that only repeats the signature.
 - Don't create other planning documents, ADRs, status reports or per-feature READMEs.
 
+## Versions and dependencies
+
+- Use the **latest stable release of everything** from the day it's added: Composer and npm packages,
+  GitHub Actions, CI runner images, and Docker images. For Node.js that means the newest LTS line.
+  The one deliberate exception is MariaDB, which stays on 10.11 to match production.
+- Pin the CI runner to a named image (`ubuntu-26.04`), never `-latest`, so runner changes are a visible
+  commit. Use the action's current major tag (`actions/checkout@v7`).
+- When you touch dependencies, check for newer releases first (`sail composer outdated --direct`,
+  `sail npm outdated`, and each action's releases page). Log any major upgrade in the decisions log.
+- CI must finish clean: no deprecation warnings or notices in the run annotations. A passing run with
+  warnings isn't done.
+
 ## Commands
 
 There's no local PHP. Everything runs in Sail (`./vendor/bin/sail …`, aliased as `sail` below).
@@ -148,6 +160,7 @@ There's no local PHP. Everything runs in Sail (`./vendor/bin/sail …`, aliased 
 
 - [ ] The milestone's acceptance criteria in `docs/10-milestones.md` are demonstrably met.
 - [ ] `sail composer lint`, `sail composer analyse` and `sail composer test` all pass, and `sail npm run build` succeeds.
+- [ ] CI is green with no warnings or notices in its annotations.
 - [ ] Tests exist for every business rule touched.
 - [ ] Customer screens touched are checked at 390px and 1280px.
 - [ ] No TODOs, dead code or debug output left behind.
