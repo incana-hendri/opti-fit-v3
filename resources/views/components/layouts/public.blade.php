@@ -11,8 +11,12 @@
             <nav aria-label="Main" class="ml-auto flex items-center gap-1 sm:gap-2">
                 <a href="{{ url('/timetable') }}" class="hidden rounded-full px-3 py-2 text-sm font-medium text-muted hover:text-white sm:inline-flex">Timetable</a>
                 <a href="{{ url('/pricing') }}" class="hidden rounded-full px-3 py-2 text-sm font-medium text-muted hover:text-white sm:inline-flex">Pricing</a>
-                <a href="{{ url('/login') }}" class="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-medium text-white hover:text-brand-light">Log in</a>
-                <x-button href="{{ url('/register') }}" size="sm">Join</x-button>
+                @auth
+                    <x-button href="{{ auth()->user()->isAdmin() ? url('/admin') : route('home') }}" size="sm">My account</x-button>
+                @else
+                    <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-medium text-white hover:text-brand-light">Log in</a>
+                    <x-button href="{{ route('register') }}" size="sm">Join</x-button>
+                @endauth
             </nav>
         </div>
     </header>

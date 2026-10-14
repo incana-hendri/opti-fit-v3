@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\RequestAccountDeletionController;
+use App\Livewire\Family;
+use App\Livewire\Onboarding;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
@@ -7,6 +10,15 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 
 Route::view('/', 'pages.landing')->name('landing');
+
+// Signed-in customers (docs/04). Auth pages themselves are registered by Fortify.
+Route::middleware(['auth', 'verified', 'customer'])->group(function () {
+    Route::get('/onboarding', Onboarding::class)->name('onboarding');
+    Route::view('/home', 'customer.home')->name('home');
+    Route::get('/family', Family::class)->name('family');
+    Route::view('/account', 'customer.account')->name('account');
+    Route::post('/account/deletion-request', RequestAccountDeletionController::class)->name('account.deletion-request');
+});
 
 // Visual QA for the components in docs/08. Never served in production.
 Route::prefix('_styleguide')->group(function () {

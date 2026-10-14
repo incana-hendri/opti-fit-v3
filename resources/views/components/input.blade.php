@@ -1,8 +1,8 @@
-@props(['label', 'name', 'type' => 'text', 'id' => null, 'hint' => null, 'revealable' => false])
+@props(['label', 'name', 'type' => 'text', 'id' => null, 'hint' => null, 'revealable' => false, 'bag' => 'default'])
 
 @php
     $id ??= $name;
-    $error = $errors->first($name);
+    $error = $errors->getBag($bag)->first($name);
     $describedBy = collect([$hint ? $id.'-hint' : null, $error ? $id.'-error' : null])->filter()->implode(' ');
     $inputClasses = 'block min-h-12 w-full rounded-xl border bg-raised px-4 text-base text-white placeholder:text-subtle '
         .'focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/40 '

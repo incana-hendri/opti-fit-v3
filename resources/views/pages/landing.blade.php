@@ -14,7 +14,7 @@
             </p>
 
             <div class="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-                <x-button href="{{ url('/register') }}" size="lg" block class="sm:w-auto">Join OptiFit</x-button>
+                <x-button href="{{ route('register') }}" size="lg" block class="sm:w-auto">Join OptiFit</x-button>
                 <x-button href="{{ url('/timetable') }}" variant="secondary" size="lg" block class="sm:w-auto">See timetable</x-button>
             </div>
         </div>
