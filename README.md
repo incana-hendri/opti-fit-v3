@@ -8,7 +8,8 @@ Families sign up, add their members, and request a monthly package. The studio a
 request and the family receives a monthly pool of credits. One credit books one person into one
 class. Credits expire at month end.
 
-> **Status:** Milestone 0 (scaffold and brand foundation) is done. Next is M1, accounts and households.
+> **Status:** Milestones 0 (scaffold and brand) and 1 (accounts and households) are done. Next is M2,
+> packages, memberships and credits.
 > Start with `AGENTS.md`, then `docs/10-milestones.md`.
 
 ## Repository map

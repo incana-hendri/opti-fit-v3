@@ -1,12 +1,13 @@
 {{--
     Bottom sheet on mobile, centred modal from 640px (docs/08). Focus-trapped, closes with Esc.
     Open:  $dispatch('open-sheet', '{name}')     Close: $dispatch('close-sheet', '{name}')
+    From Livewire: $this->dispatch('open-sheet', name: '{name}')
 --}}
 @props(['name', 'title'])
 
-<div x-data="{ open: false }"
-     x-on:open-sheet.window="if ($event.detail === @js($name)) open = true"
-     x-on:close-sheet.window="if ($event.detail === @js($name)) open = false"
+<div x-data="{ open: false, isMine: (detail) => (detail?.name ?? detail) === @js($name) }"
+     x-on:open-sheet.window="if (isMine($event.detail)) open = true"
+     x-on:close-sheet.window="if (isMine($event.detail)) open = false"
      x-on:keydown.escape.window="open = false"
      x-effect="document.body.classList.toggle('overflow-hidden', open)">
     <div x-cloak x-show="open" class="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6">

@@ -8,7 +8,7 @@
 
     <header class="sticky top-0 z-30 border-b border-line bg-surface/90 backdrop-blur supports-[backdrop-filter]:bg-surface/75">
         <div class="mx-auto flex h-14 max-w-[960px] items-center gap-6 px-4 lg:h-16 lg:px-6">
-            <a href="{{ url('/home') }}" class="shrink-0" aria-label="OptiFit home">
+            <a href="{{ route('home') }}" class="shrink-0" aria-label="OptiFit home">
                 <x-logo class="h-7 w-auto" />
             </a>
 
@@ -29,7 +29,7 @@
                      class="absolute right-0 mt-2 w-52 overflow-hidden rounded-2xl border border-line bg-raised py-1 shadow-lg">
                     <a role="menuitem" href="{{ url('/membership') }}" class="block px-4 py-3 text-sm hover:bg-white/5">Membership</a>
                     <a role="menuitem" href="{{ url('/account') }}" class="block px-4 py-3 text-sm hover:bg-white/5">Account</a>
-                    <form method="POST" action="{{ url('/logout') }}">
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button role="menuitem" type="submit" class="block w-full px-4 py-3 text-left text-sm hover:bg-white/5">Log out</button>
                     </form>

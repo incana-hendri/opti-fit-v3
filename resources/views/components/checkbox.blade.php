@@ -1,8 +1,8 @@
-@props(['label' => null, 'name' => null, 'id' => null, 'description' => null])
+@props(['label' => null, 'name' => null, 'id' => null, 'description' => null, 'bag' => 'default'])
 
 @php
     $id ??= $name ?? 'cb-'.\Illuminate\Support\Str::random(6);
-    $error = $name ? $errors->first($name) : null;
+    $error = $name ? $errors->getBag($bag)->first($name) : null;
 @endphp
 
 <div>
