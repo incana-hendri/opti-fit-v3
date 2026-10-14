@@ -18,6 +18,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-14 · Published Filament assets (`public/{css,js,fonts}/filament`) are git-ignored · `composer install` regenerates them via `filament:upgrade`
 - 2026-10-14 · Every customer layout loads `@livewireScripts` · it provides Alpine, which the sheet, toast, password toggle and pricing selector need on non-Livewire pages too
 - 2026-10-14 · Session card shows "Full" only as the places badge, and "Booking closed"/"All booked" as a line under the details · a right-hand status column squeezed titles to three lines at 390px
+- 2026-10-14 · CI runs on `ubuntu-26.04` with `actions/checkout@v7`, `actions/setup-node@v7` (Node 24 LTS) and `shivammathur/setup-php@v2` (2.40.0) · latest stable releases; v4 actions ran on deprecated Node 20, and `ubuntu-latest` was about to move to 26.04 anyway. Node 26 isn't LTS yet
 - 2026-10-14 · Public footer has the venue address hard-coded · locations arrive in M3; the footer can read the active location then
 
 ## Ideas (out of scope for now)

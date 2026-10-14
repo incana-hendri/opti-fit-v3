@@ -1,12 +1,14 @@
 name: CI
 
+# PRs are checked once per commit; main is checked again after every merge.
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     services:
       mariadb:
@@ -30,7 +32,7 @@ jobs:
       DB_PASSWORD: password
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -38,7 +40,7 @@ jobs:
           extensions: intl, pdo_mysql, zip, gd, bcmath
           coverage: none
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
           cache: npm
