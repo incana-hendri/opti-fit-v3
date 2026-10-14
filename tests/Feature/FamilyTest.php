@@ -2,6 +2,7 @@
 
 use App\Livewire\Family;
 use App\Models\Member;
+use App\Models\Membership;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
@@ -161,4 +162,24 @@ it("can't archive another household's member by tampering with the pending actio
         ->assertNotFound();
 
     expect($someoneElses->fresh()->isArchived())->toBeFalse();
+});
+
+it('marks the members covered by the active membership (BR-4.10)', function () {
+    $user = customer(2);
+    $covered = $user->household->members->first();
+    $membership = activeMembership($user);
+    $membership->members()->sync([$covered->id]);
+
+    Livewire::actingAs($user)->test(Family::class)
+        ->assertViewHas('coveredIds', [$covered->id])
+        ->assertSee('Covered by your package');
+});
+
+it('marks nobody as covered without an active membership (BR-4.10)', function () {
+    $user = customer();
+    Membership::factory()->for($user->household)->paused()->create();
+
+    Livewire::actingAs($user)->test(Family::class)
+        ->assertViewHas('coveredIds', [])
+        ->assertDontSee('Covered by your package');
 });

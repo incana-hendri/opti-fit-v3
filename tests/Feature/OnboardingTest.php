@@ -131,7 +131,7 @@ it('saves the emergency contact and finishes (BR-2.6)', function () {
         ->set('emergencyName', 'Johan Smith')
         ->set('emergencyPhone', '083 765 4321')
         ->call('finish')
-        ->assertRedirect(route('home'));
+        ->assertRedirect(route('membership.request'));
 
     expect($household->fresh()->emergency_contact_name)->toBe('Johan Smith')
         ->and($household->fresh()->emergency_contact_phone)->toBe('083 765 4321');

@@ -27,8 +27,8 @@
                 </button>
                 <div x-cloak x-show="open" x-transition.opacity.duration.150ms role="menu"
                      class="absolute right-0 mt-2 w-52 overflow-hidden rounded-2xl border border-line bg-raised py-1 shadow-lg">
-                    <a role="menuitem" href="{{ url('/membership') }}" class="block px-4 py-3 text-sm hover:bg-white/5">Membership</a>
-                    <a role="menuitem" href="{{ url('/account') }}" class="block px-4 py-3 text-sm hover:bg-white/5">Account</a>
+                    <a role="menuitem" href="{{ route('membership') }}" class="block px-4 py-3 text-sm hover:bg-white/5">Membership</a>
+                    <a role="menuitem" href="{{ route('account') }}" class="block px-4 py-3 text-sm hover:bg-white/5">Account</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button role="menuitem" type="submit" class="block w-full px-4 py-3 text-left text-sm hover:bg-white/5">Log out</button>
