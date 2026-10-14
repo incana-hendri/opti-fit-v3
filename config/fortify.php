@@ -131,8 +131,7 @@ return [
     |
     */
 
-    // Off until the branded auth views are built in Milestone 1.
-    'views' => false,
+    'views' => true,
 
     /*
     |--------------------------------------------------------------------------

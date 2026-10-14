@@ -115,4 +115,22 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Markdown Mail Settings
+    |--------------------------------------------------------------------------
+    |
+    | The OptiFit theme (docs/06) lives in resources/views/vendor/mail. Only
+    | the overridden components are kept there; the rest fall back to Laravel.
+    |
+    */
+
+    'markdown' => [
+        'theme' => 'optifit',
+
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
 ];
