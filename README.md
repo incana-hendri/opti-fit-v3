@@ -8,8 +8,8 @@ Families sign up, add their members, and request a monthly package. The studio a
 request and the family receives a monthly pool of credits. One credit books one person into one
 class. Credits expire at month end.
 
-> **Status:** Milestones 0 (scaffold and brand) and 1 (accounts and households) are done. Next is M2,
-> packages, memberships and credits.
+> **Status:** Milestones 0 to 2 (scaffold, accounts and households, packages, memberships and credits) are done
+> bar the final review. Next is M3, timetable and booking.
 > Start with `AGENTS.md`, then `docs/10-milestones.md`.
 
 ## Repository map
@@ -52,3 +52,17 @@ cp .env.example .env
 - Mailpit (outgoing mail): http://localhost:8025
 - Component styleguide (not in production): http://localhost/_styleguide
 - Tests: `./vendor/bin/sail composer test` · style: `sail composer lint` · static analysis: `sail composer analyse`
+
+## Demo data
+
+For local development and screenshots, add an admin and three demo households (one active, one with a pending
+request, one ending this month):
+
+```bash
+./vendor/bin/sail artisan db:seed --class=DemoSeeder
+```
+
+Log in with `admin@optifit.test` (admin panel) or `smith@optifit.test`, `jones@optifit.test`, `botha@optifit.test`;
+the password is `password`. It refuses to run in production. Sessions and bookings are added in M3.
+
+The monthly credits job (`sail artisan optifit:monthly-credits`) runs daily at 00:05 through the scheduler and is safe to run by hand.

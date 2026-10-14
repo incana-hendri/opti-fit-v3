@@ -31,6 +31,23 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-14 · Livewire's generator is set to class-based components without emoji names (`config/livewire.php`) · docs/07 puts components in `app/Livewire`
 - 2026-10-14 · Models declare cast types (`Carbon`, enums) with `@property` · Larastan doesn't apply types from the `casts()` method here, and the PHPDoc states the real type
 - 2026-10-14 · The admin households table shows household (with account holder underneath) and flags on phones; email, members and phone appear from wider screens · docs/05 asks for tables that work on the owner's phone
+- 2026-10-14 · `credit_entries.booking_id` is a plain nullable unsigned bigint with no foreign key until M3 · the `bookings` table doesn't exist yet; M3 adds the FK
+- 2026-10-14 · `CreditLedger` lives in `app/Support` as a final class with static `balance()` and `write()` · docs/07 allows static methods or a small class; it is the only code that inserts `credit_entries`, and `write()` refuses to run outside a transaction
+- 2026-10-14 · Domain failures are `MembershipException` and `CreditException` (both `RuntimeException`) · docs/07 names `BookingException`-style exceptions per area; two tiny classes keep customer-safe messages separate from bugs
+- 2026-10-14 · A customer can't cancel (or undo a cancellation) while a package change is scheduled for next month · the old membership's `ends_period` is what hands over to the new one, so changing it would leave a gap or an overlap (BR-4.1, 4.7); the page explains why and asks them to contact the studio
+- 2026-10-14 · A customer can cancel only an `active` membership, not a `paused` one · BR-4.8 says "active"; the page tells paused customers to contact the studio
+- 2026-10-14 · Approving a request is refused while the household already has a package starting next month · it would overlap (BR-4.1); the admin cancels the scheduled one first
+- 2026-10-14 · Resuming a paused membership moves `starts_period` to the next period when this period has no grant yet · the monthly job grants on any day (so a missed 1st self-heals), and without this it would grant the day after a mid-month resume, against BR-4.9 "grants resume on the next 1st". Side effect: until the 1st the household has no membership in effect, so its members aren't bookable from M3 (BR-4.10)
+- 2026-10-14 · Cancel now (admin) sets `ends_period` to the current period only if the membership has already started; a membership that never started keeps `ends_period` null · nothing was ever granted for it
+- 2026-10-14 · "Used" on the Home credit card is bookings less refunds this period, so 0 until M3 adds bookings · there is nothing else that uses credits
+- 2026-10-14 · The "Book your first class" (C4) and "Book now" (C7) email buttons link to `/home` until M3 adds `/book` · the target doesn't exist yet
+- 2026-10-14 · The request form (`/membership/request`) has an "I'll do this later" link to `/home` · docs/04 says the customer can skip after onboarding, and the form is where onboarding now ends
+- 2026-10-14 · The pricing page's "5+" shows the price of the top tier at or below 5 members and the credits for 5 members with a "+" · BR-3.6 asks for a 1…5+ selector; the top tier already means "or more"
+- 2026-10-14 · Pricing and request pages show "≈ R{price ÷ credits} per class" rounded to the whole rand · docs/04 gives no rounding
+- 2026-10-14 · `PackageFactory` creates standard price tiers by default (`pricedAt()` replaces them) · a package without a tier for 1 member is invalid (BR-3.2)
+- 2026-10-14 · The membership list is a Filament table with row actions only (no create, edit or view page); approve, decline, pause, resume, cancel now and edit are modals calling the Actions · customers create memberships, and docs/05 lists only these actions
+- 2026-10-14 · The scheduler registers `optifit:monthly-credits`, the queue worker and the 03:00 housekeeping now; the 06:00 below-minimum email (A5) arrives in M3 · A5 needs sessions
+- 2026-10-14 · `DemoSeeder` writes its data with factories and `CreditLedger` rather than the actions, and is a no-op when `admin@optifit.test` exists · running the actions would queue emails for fake customers
 
 ## Ideas (out of scope for now)
 
