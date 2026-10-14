@@ -45,7 +45,8 @@ Rendered from Markdown files in `resources/markdown/` (see `docs/legal/README.md
 
 ## Onboarding `/onboarding` (Livewire, 3 steps, progress dots, progress saved per step)
 
-1. **About you:** "Will you be training too?" (yes/no). Household name (prefilled "{Last name} family").
+1. **About you:** "Will you be training too?" (yes/no). If yes, their gender (the member record needs one, and
+   `users` doesn't store it). Household name (prefilled "{Last name} family").
 2. **Your family:** a list of member cards. "Add family member" opens a sheet (first name, last name, DOB,
    gender, health notes with helper text "Injuries or conditions our trainer should know about. Only the studio sees this").
    At least one member is required to continue.

@@ -20,6 +20,17 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-14 · Session card shows "Full" only as the places badge, and "Booking closed"/"All booked" as a line under the details · a right-hand status column squeezed titles to three lines at 390px
 - 2026-10-14 · CI runs on `ubuntu-26.04` with `actions/checkout@v7`, `actions/setup-node@v7` (Node 24 LTS) and `shivammathur/setup-php@v2` (2.40.0) · latest stable releases; v4 actions ran on deprecated Node 20, and `ubuntu-latest` was about to move to 26.04 anyway. Node 26 isn't LTS yet
 - 2026-10-14 · Public footer has the venue address hard-coded · locations arrive in M3; the footer can read the active location then
+- 2026-10-14 · Onboarding creates the household at step 1 and resumes at the first unfinished step. "Onboarded" means at least one active member; the `customer` middleware sends anyone else to `/onboarding` · progress saved per step (docs/04) without an extra column; archiving everyone sends the customer back to add a member
+- 2026-10-14 · Onboarding step 1 asks the account holder's gender when they train (docs/04 updated) · BR-2.3 requires gender on a member and `users` has no gender column
+- 2026-10-14 · Until M2, onboarding "Finish" goes to `/home`, and Home's "Choose a package" links to `/membership/request` (built in M2) · the request form doesn't exist yet
+- 2026-10-14 · `Member::canBeDeleted()` always returns true until M3 adds bookings and its BR-2.5 check · no bookings can exist before then
+- 2026-10-14 · Archive and delete confirmations use the brand sheet, not `wire:confirm` · native browser dialogs can't be styled and block automated browser checks
+- 2026-10-14 · The admin household resource has list and view pages only · customers create and edit their own household; docs/05 lists no admin create or edit
+- 2026-10-14 · Reply-To is added to every outgoing email by one `MessageSending` listener using `Settings::current()->contact_email` · covers Fortify notifications and Mailables in one place (docs/06)
+- 2026-10-14 · Mail theme keeps only the overridden pieces (`header`, `message`, `themes/optifit.css`) in `resources/views/vendor/mail` · the rest fall back to Laravel, so upgrades bring their fixes
+- 2026-10-14 · Livewire's generator is set to class-based components without emoji names (`config/livewire.php`) · docs/07 puts components in `app/Livewire`
+- 2026-10-14 · Models declare cast types (`Carbon`, enums) with `@property` · Larastan doesn't apply types from the `casts()` method here, and the PHPDoc states the real type
+- 2026-10-14 · The admin households table shows household (with account holder underneath) and flags on phones; email, members and phone appear from wider screens · docs/05 asks for tables that work on the owner's phone
 
 ## Ideas (out of scope for now)
 
@@ -28,3 +39,4 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - Waitlist for full classes
 - Promotional free-trial class sign-ups
 - Two-factor login (Fortify supports it) · overkill for now, revisit only if the owner asks
+- Restore (un-archive) a family member · BR-2.5 only describes archiving; today an admin would add the member again
