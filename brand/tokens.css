@@ -1,0 +1,36 @@
+/* OptiFit brand tokens. Source of truth for colours and type (see docs/08-brand-and-design.md).
+   Import into resources/css/app.css and map into Tailwind v4 @theme. */
+
+:root {
+  /* Surfaces (dark-only customer site) */
+  --of-night: #0D0918;
+  --of-surface: #171423;
+  --of-surface-raised: #221D33;
+  --of-border: rgba(255, 255, 255, 0.10);
+
+  /* Brand orange */
+  --of-orange: #FF9500;
+  --of-orange-light: #FFB84D;
+  --of-orange-dark: #E6860E;
+  --of-ink: #0D0918; /* text on orange */
+
+  /* Text */
+  --of-text: #FFFFFF;
+  --of-text-muted: #CCCCCC;
+  --of-text-subtle: #9A96A8;
+
+  /* Status */
+  --of-success: #2ED573;
+  --of-danger: #FF4757;
+  --of-info: #5B7CFA;
+
+  /* Light surfaces (emails / print) */
+  --of-light-page: #F4F3F7;
+  --of-light-card: #FFFFFF;
+  --of-light-text: #1A1A1A;
+  --of-light-muted: #555555;
+
+  /* Type */
+  --of-font: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --of-radius-card: 16px;
+}

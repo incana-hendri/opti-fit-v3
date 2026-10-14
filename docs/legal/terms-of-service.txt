@@ -1,0 +1,251 @@
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+OptiFit
+
+← Back to Home
+
+Terms of Service
+Important: Please read these Terms of Service carefully before using OptiFit
+services. By creating an account or attending classes, you agree to be bound by
+these terms.
+
+1. About OptiFit
+OptiFit is a functional fitness training service that provides family-oriented fitness
+classes. We help families build strength together through structured workout programs.
+
+Service Provider: OptiFit Functional Fitness Training
+Contact: info@opti-fit.co.za
+
+2. Acceptance of Terms
+By using OptiFit services, you confirm that:
+You are 18 years or older, or have parental/guardian consent
+You have read and understood these terms
+localhost:8080/terms-of-service.php
+
+1/8
+
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+You agree to comply with all terms and conditions
+You accept responsibility for family members you book for
+
+3. Account Registration
+3.1 Account Requirements
+Provide accurate and complete information
+Verify your email address
+Maintain the security of your account credentials
+Update information when it changes
+
+3.2 Account Responsibility
+You are responsible for:
+All activities under your account
+Bookings made for family members
+Keeping login credentials secure
+Notifying us of unauthorized use
+
+4. Membership and Pricing
+4.1 Monthly Packages
+OptiFit offers monthly fitness packages based on:
+Number of family members
+Frequency of classes (2×, 3×, or 4× per week)
+Family size discounts as advertised
+
+4.2 Pricing and Payment
+Prices are displayed in South African Rands (ZAR)
+localhost:8080/terms-of-service.php
+
+2/8
+
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+Monthly invoices based on package selection
+Payment due upon invoice receipt
+Prices subject to change with 30 days notice
+
+4.3 Credit System
+Important Credit Rules:
+Credits allocated monthly and expire at month-end
+Weekly booking limits apply (cannot use all credits in one week)
+No rollover of unused credits to following month
+No refunds for unused credits
+
+5. Class Booking and Attendance
+5.1 Booking Policy
+Bookings subject to class capacity
+First-come, first-served basis
+One credit per person per class
+Weekly limits apply per package type
+
+5.2 Cancellation Policy
+Cancel bookings through your account dashboard
+Cancellations do not restore used credits
+No-shows are treated as attended (credits used)
+Emergency cancellations considered case-by-case
+
+5.3 Class Changes
+We reserve the right to:
+localhost:8080/terms-of-service.php
+
+3/8
+
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+Modify class schedules with reasonable notice
+Cancel classes due to insufficient bookings
+Change class locations when necessary
+Substitute instructors as needed
+
+6. Health and Safety
+
+⚠️ Important Health Disclaimer
+Participation in fitness activities involves inherent risks. By participating, you
+acknowledge these risks and assume responsibility for your safety.
+
+6.1 Health Requirements
+Before participating, you must:
+Confirm you are physically able to participate
+Disclose any medical conditions that may affect participation
+Consult healthcare providers if unsure about fitness activities
+Follow all safety instructions provided
+
+6.2 Assumption of Risk
+You acknowledge that:
+Physical exercise carries inherent risks
+Injuries may occur despite safety measures
+You participate voluntarily at your own risk
+OptiFit is not liable for injuries resulting from participation
+
+6.3 Emergency Procedures
+Inform instructors of any discomfort or issues immediately
+localhost:8080/terms-of-service.php
+
+4/8
+
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+Stop exercising if you feel unwell
+Follow emergency evacuation procedures when required
+Ensure emergency contact information is current
+
+7. Code of Conduct
+7.1 Expected Behavior
+All participants must:
+Treat others with respect and courtesy
+Follow instructor guidance and safety rules
+Arrive on time and prepared for classes
+Use equipment responsibly and safely
+Maintain appropriate hygiene standards
+
+7.2 Prohibited Activities
+Disruptive or inappropriate behavior
+Use of mobile phones during classes
+Bringing outside food or drinks (unless medically necessary)
+Recording or photographing without consent
+Any behavior that compromises safety
+
+8. Intellectual Property
+All OptiFit content, including:
+Workout programs and methodologies
+Website content and design
+Logos, branding, and marketing materials
+Training materials and guides
+
+localhost:8080/terms-of-service.php
+
+5/8
+
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+Are protected by intellectual property rights and remain our exclusive property.
+
+9. Privacy and Data Protection
+Your privacy is important to us. Please review our Privacy Policy to understand how we
+collect, use, and protect your personal information in compliance with POPIA.
+
+10. Limitation of Liability
+To the fullest extent permitted by law, OptiFit shall not be liable for:
+Personal injuries or accidents during participation
+Loss or damage to personal property
+Indirect, incidental, or consequential damages
+Service interruptions or technical issues
+
+11. Termination
+11.1 By You
+You may terminate your account at any time by contacting us. Upon termination:
+Unused credits are forfeited (no refunds)
+Access to services ceases immediately
+Outstanding payments remain due
+
+11.2 By OptiFit
+We may terminate accounts for:
+Violation of these terms
+Non-payment of fees
+Inappropriate behavior
+localhost:8080/terms-of-service.php
+
+6/8
+
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+Safety violations
+
+12. Modifications to Terms
+We may update these terms periodically. Changes will be communicated through:
+Email notification to active users
+Prominent website notices
+Updated effective date below
+Continued use of services after changes indicates acceptance of new terms.
+
+13. Governing Law
+These terms are governed by the laws of South Africa. Any disputes will be resolved
+through South African courts or agreed arbitration procedures.
+
+14. Contact Information
+
+For questions about these terms:
+Email: info@opti-fit.co.za
+Subject: "Terms of Service Inquiry"
+
+15. Severability
+If any provision of these terms is found invalid or unenforceable, the remaining
+provisions will continue in full force and effect.
+
+Effective Date: August 27, 2025
+
+localhost:8080/terms-of-service.php
+
+7/8
+
+04/09/2025, 08:37
+
+Terms of Service - OptiFit
+
+These terms replace all previous versions and are effective immediately.
+
+Privacy Policy
+
+Terms of Service
+
+Cookie Settings
+
+© 2025 OptiFit. Building stronger families, one workout at a time.
+
+localhost:8080/terms-of-service.php
+
+8/8
+
+
