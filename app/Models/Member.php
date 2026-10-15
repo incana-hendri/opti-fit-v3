@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -17,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $date_of_birth
  * @property Carbon|null $archived_at
  * @property int|null $memberships_count only present when loaded with withCount()
+ * @property int|null $bookings_count only present when loaded with withCount()
  */
 class Member extends Model
 {
@@ -67,9 +69,18 @@ class Member extends Model
         return $this->belongsToMany(Membership::class, 'membership_member');
     }
 
-    // BR-2.5: members that anything refers to can only be archived. Bookings join the check in Milestone 3.
+    /**
+     * @return HasMany<Booking, $this>
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    // BR-2.5: members that anything refers to (a membership or a booking) can only be archived.
     public function canBeDeleted(): bool
     {
-        return ($this->memberships_count ?? $this->memberships()->count()) === 0;
+        return ($this->memberships_count ?? $this->memberships()->count()) === 0
+            && ($this->bookings_count ?? $this->bookings()->count()) === 0;
     }
 }

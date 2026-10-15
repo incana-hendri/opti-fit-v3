@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\ClassSession;
+use App\Models\CreditEntry;
 use App\Models\Household;
 use App\Models\Membership;
 use App\Models\Package;
@@ -40,4 +42,24 @@ function activeMembership(User $user, ?string $startsPeriod = null, array $attri
         ->for(Package::factory()->create(['sessions_per_week' => 2, 'credits_per_member' => 8]))
         ->active($startsPeriod)
         ->create($attributes);
+}
+
+/**
+ * A customer whose active membership covers every member, with this month's credits in the ledger.
+ */
+function bookingCustomer(int $members = 2, int $credits = 8): User
+{
+    $user = customer($members);
+    activeMembership($user);
+    CreditEntry::factory()->for($user->household)->create(['amount' => $credits]);
+
+    return $user;
+}
+
+/**
+ * @param  array<string, mixed>  $attributes
+ */
+function classSession(array $attributes = []): ClassSession
+{
+    return ClassSession::factory()->create($attributes);
 }

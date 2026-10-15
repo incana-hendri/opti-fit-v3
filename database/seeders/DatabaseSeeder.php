@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Location;
 use App\Models\Package;
+use App\Models\ScheduleTemplate;
 use App\Models\Settings;
 use Illuminate\Database\Seeder;
 
@@ -18,6 +20,18 @@ class DatabaseSeeder extends Seeder
     ];
 
     /**
+     * The studio's usual week (docs/03 § Seed data): ISO weekday, start time, title. The admin adjusts them.
+     */
+    private const TEMPLATES = [
+        [1, '05:00', 'Morning Functional Fitness'],
+        [1, '16:00', 'Afternoon Functional Fitness'],
+        [2, '15:30', 'Afternoon Functional Fitness'],
+        [3, '05:00', 'Morning Functional Fitness'],
+        [4, '16:00', 'Afternoon Functional Fitness'],
+        [5, '05:00', 'Morning Functional Fitness'],
+    ];
+
+    /**
      * Production seed: safe to run on an existing database, it only adds what is missing.
      */
     public function run(): void
@@ -28,6 +42,30 @@ class DatabaseSeeder extends Seeder
 
         if (! Package::query()->exists()) {
             $this->seedPackages();
+        }
+
+        if (! Location::query()->exists()) {
+            $this->seedVenueAndTemplates();
+        }
+    }
+
+    private function seedVenueAndTemplates(): void
+    {
+        $location = Location::query()->create([
+            'name' => 'Gene Louw Activity Centre',
+            'address' => 'Tulip Street, Amanda Glen, Durbanville',
+        ]);
+
+        foreach (self::TEMPLATES as [$weekday, $startTime, $title]) {
+            ScheduleTemplate::query()->create([
+                'title' => $title,
+                'location_id' => $location->id,
+                'weekday' => $weekday,
+                'start_time' => $startTime,
+                'duration_minutes' => 45,
+                'capacity' => 15,
+                'min_participants' => 3,
+            ]);
         }
     }
 
