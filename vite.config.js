@@ -5,8 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            // fonts.css is its own entry so the Filament panel can load the same self-hosted Poppins.
-            input: ['resources/css/app.css', 'resources/css/fonts.css', 'resources/js/app.js'],
+            // fonts.css is its own entry so the Filament panel can load the same self-hosted Poppins; theme.css is the panel's own build.
+            input: ['resources/css/app.css', 'resources/css/fonts.css', 'resources/css/filament/admin/theme.css', 'resources/js/app.js'],
             refresh: true,
         }),
         tailwindcss(),

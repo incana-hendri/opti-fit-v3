@@ -87,6 +87,8 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · The dashboard's "Today's classes" lists scheduled classes only (a cancelled class is omitted, not struck through) and shows "Below minimum" only for a class that hasn't started · there is nothing to run for a cancelled class, and the warning is for acting before it starts (A5 does the same)
 - 2026-10-15 · "Needs attention" counts deletion requests only for households that are not yet anonymised (`Household::deletionRequested()`), and links to the households list filtered by a "Deletion requested" toggle · once anonymised, the request is dealt with
 - 2026-10-15 · The scaffold `AccountWidget` is gone, and the dashboard is a one-column `Dashboard` page in the "Today" navigation group · docs/05 lists three widgets in that order
+- 2026-10-15 · The admin panel has its own Vite-built Filament theme (`resources/css/filament/admin/theme.css`, registered with `viteTheme()`) · the dashboard and Reports views use utility classes that Filament's prebuilt stylesheet doesn't contain; no new package, it is the documented way to style custom panel views
+- 2026-10-15 · Reports: the month picker offers the current month and the twelve before it, keeps the choice in the URL (`?month=2026-09`) and falls back to the current month for anything it doesn't offer; "Export CSV" downloads the sessions table of the chosen month as `optifit-sessions-YYYY-MM.csv` with the columns Date (`Y-m-d H:i`), Title, Capacity, Occupied, Fill %, Attended
 
 ## Ideas (out of scope for now)
 
