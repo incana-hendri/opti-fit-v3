@@ -49,6 +49,7 @@ class MembershipFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'status' => MembershipStatus::Active,
             'starts_period' => $startsPeriod ?? Period::current(),
+            'grants_from_period' => $startsPeriod ?? Period::current(),
             'approved_at' => now(),
         ]);
     }

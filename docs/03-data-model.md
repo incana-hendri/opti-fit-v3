@@ -75,6 +75,7 @@ The household row is the **lock target** for all credit and booking operations (
 | monthly_price_cents | int unsigned | copied at request, final at approval |
 | starts_period | char(7) null | set at approval |
 | ends_period | char(7) null | last period with a grant (BR-4.7, 4.8) |
+| grants_from_period | char(7) null | first period the monthly job may grant; set at approval and resume (BR-4.4, 4.9, 5.5) |
 | customer_note | string(500) null | |
 | admin_note | text null | e.g. payment reference (D8) |
 | decline_reason | string(500) null | |

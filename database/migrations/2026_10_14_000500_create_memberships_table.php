@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedInteger('monthly_price_cents');
             $table->char('starts_period', 7)->nullable();
             $table->char('ends_period', 7)->nullable();
+            // The first period the monthly job may grant for (BR-4.4, 4.9), so a grant is never due just because a row is missing.
+            $table->char('grants_from_period', 7)->nullable();
             $table->string('customer_note', 500)->nullable();
             $table->text('admin_note')->nullable();
             $table->string('decline_reason', 500)->nullable();

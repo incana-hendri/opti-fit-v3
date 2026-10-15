@@ -78,8 +78,7 @@ class RunMonthlyCredits extends Command
 
         $due = Membership::query()
             ->with(['household.user', 'package'])
-            ->where('status', MembershipStatus::Active)
-            ->inEffect($current)
+            ->dueForGrant($current)
             ->get();
 
         foreach ($due as $membership) {

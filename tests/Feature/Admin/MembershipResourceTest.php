@@ -225,7 +225,8 @@ it('pauses and resumes a membership (BR-4.9)', function () {
         ->set('activeTab', 'paused')
         ->callAction(TestAction::make('resume')->table($membership));
     expect($membership->fresh()->status)->toBe(MembershipStatus::Active)
-        ->and($membership->fresh()->starts_period)->toBe('2026-11'); // no grant this month yet
+        ->and($membership->fresh()->starts_period)->toBe('2026-09')
+        ->and($membership->fresh()->grants_from_period)->toBe('2026-11'); // no grant mid-month
 });
 
 it('cancels a membership now without touching the ledger (BR-4.9)', function () {

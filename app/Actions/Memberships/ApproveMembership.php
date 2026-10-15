@@ -62,6 +62,8 @@ class ApproveMembership
             $approved->update([
                 'status' => MembershipStatus::Active,
                 'starts_period' => $startsPeriod,
+                // A current-period start is settled by this approval (even with 0 credits), so the job starts next month.
+                'grants_from_period' => $startsPeriod === $current ? Period::next() : $startsPeriod,
                 'monthly_credits' => $monthlyCredits,
                 'monthly_price_cents' => $monthlyPriceCents,
                 'admin_note' => filled($adminNote) ? $adminNote : null,

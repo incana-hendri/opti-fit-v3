@@ -2,6 +2,7 @@
 
 use App\Actions\Credits\AdjustCredits;
 use App\Actions\Credits\ExpireCredits;
+use App\Actions\Memberships\ApproveMembership;
 use App\Actions\Memberships\PauseMembership;
 use App\Actions\Memberships\ResumeMembership;
 use App\Enums\CreditEntryType;
@@ -10,6 +11,7 @@ use App\Exceptions\CreditException;
 use App\Mail\MonthlyCreditsReady;
 use App\Models\CreditEntry;
 use App\Models\Membership;
+use App\Models\Package;
 use App\Support\CreditLedger;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -156,6 +158,8 @@ it('skips a paused month and restores grants from the next 1st after a resume (B
 
     $this->travelTo(Carbon::parse('2026-11-05'));
     app(ResumeMembership::class)->handle($membership);
+    expect($membership->fresh()->starts_period)->toBe('2026-09')
+        ->and($user->household->membershipInEffect()?->is($membership))->toBeTrue();
     $this->travelTo(Carbon::parse('2026-11-06 00:05'));
     $this->artisan('optifit:monthly-credits')->assertSuccessful();
     expect(CreditLedger::balance($user->household, '2026-11'))->toBe(0); // no mid-month grant
@@ -226,4 +230,83 @@ it('needs a non-zero amount and a reason (BR-6.5)', function () {
     expect(fn () => app(AdjustCredits::class)->handle($user->household, 0, 'Nothing', admin()))->toThrow(CreditException::class)
         ->and(fn () => app(AdjustCredits::class)->handle($user->household, 2, '   ', admin()))->toThrow(CreditException::class, 'reason');
     expect(CreditEntry::query()->count())->toBe(0);
+});
+
+// --- A grant is due only from grants_from_period (BR-4.4, 4.9, 5.5) ---
+
+it('does not grant the next day when approval gave 0 first-month credits (BR-4.4)', function () {
+    $this->travelTo(Carbon::parse('2026-10-16 10:00'));
+    $user = customer();
+    $request = Membership::factory()->for($user->household)->for(Package::factory()->create())->create();
+    app(ApproveMembership::class)->handle($request, admin(), '2026-10', 8, 52000, 0);
+
+    $this->travelTo(Carbon::parse('2026-10-17 00:05'));
+    $this->artisan('optifit:monthly-credits')->assertSuccessful();
+
+    expect(CreditEntry::query()->count())->toBe(0);
+    Mail::assertNotQueued(MonthlyCreditsReady::class);
+
+    $this->travelTo(Carbon::parse('2026-11-01 00:05'));
+    $this->artisan('optifit:monthly-credits')->assertSuccessful();
+
+    expect(CreditLedger::balance($user->household))->toBe(8);
+    Mail::assertQueued(MonthlyCreditsReady::class, 1);
+});
+
+it('does not grant again the day after a current-period approval that granted credits (BR-4.4)', function () {
+    $this->travelTo(Carbon::parse('2026-10-16 10:00'));
+    $user = customer();
+    $request = Membership::factory()->for($user->household)->for(Package::factory()->create())->create();
+    app(ApproveMembership::class)->handle($request, admin(), '2026-10', 8, 52000, 4);
+
+    $this->travelTo(Carbon::parse('2026-10-17 00:05'));
+    $this->artisan('optifit:monthly-credits')->assertSuccessful();
+
+    expect(CreditLedger::balance($user->household))->toBe(4)
+        ->and(CreditEntry::query()->count())->toBe(1);
+    Mail::assertNotQueued(MonthlyCreditsReady::class);
+});
+
+it('resumes mid-month with nothing granted until the next 1st, keeping the membership in effect (BR-4.9)', function () {
+    $this->travelTo(Carbon::parse('2026-10-20 10:00'));
+    $user = customer();
+    $membership = activeMembership($user, '2026-09', ['grants_from_period' => '2026-11']);
+    app(PauseMembership::class)->handle($membership);
+    app(ResumeMembership::class)->handle($membership);
+
+    $this->travelTo(Carbon::parse('2026-10-21 00:05'));
+    $this->artisan('optifit:monthly-credits')->assertSuccessful();
+    expect(CreditEntry::query()->count())->toBe(0)
+        ->and($user->household->membershipInEffect()?->is($membership))->toBeTrue();
+
+    $this->travelTo(Carbon::parse('2026-11-01 00:05'));
+    $this->artisan('optifit:monthly-credits')->assertSuccessful();
+    expect(CreditLedger::balance($user->household))->toBe(8);
+});
+
+it('pausing and resuming within the same month changes nothing for a membership already granted (BR-4.9)', function () {
+    $this->travelTo(Carbon::parse('2026-10-01 00:05'));
+    $user = customer();
+    $membership = activeMembership($user, '2026-09');
+    $this->artisan('optifit:monthly-credits')->assertSuccessful();
+
+    $this->travelTo(Carbon::parse('2026-10-10'));
+    app(PauseMembership::class)->handle($membership);
+    app(ResumeMembership::class)->handle($membership);
+    $this->artisan('optifit:monthly-credits')->assertSuccessful();
+
+    expect(CreditEntry::query()->count())->toBe(1)
+        ->and($membership->fresh()->grants_from_period)->toBe('2026-11')
+        ->and($user->household->membershipInEffect()?->is($membership))->toBeTrue();
+});
+
+it('does not turn an ending membership into a phantom scheduled one when paused and resumed (BR-4.8, 4.9)', function () {
+    $this->travelTo(Carbon::parse('2026-10-16 10:00'));
+    $user = customer();
+    $membership = activeMembership($user, '2026-09', ['ends_period' => '2026-10']);
+    app(PauseMembership::class)->handle($membership);
+    app(ResumeMembership::class)->handle($membership);
+
+    expect($user->household->scheduledMembership())->toBeNull()
+        ->and($membership->fresh()->isEnding())->toBeTrue();
 });

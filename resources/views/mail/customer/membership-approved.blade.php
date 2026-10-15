@@ -9,7 +9,7 @@ It starts in **{{ \App\Support\Period::label($membership->starts_period) }}**.
 @if ($firstMonthCredits)
 Your first {{ $firstMonthCredits }} {{ \Illuminate\Support\Str::plural('credit', $firstMonthCredits) }} are ready to use now.
 @else
-Your credits arrive on the 1st of that month.
+Your monthly credits start on 1 {{ \App\Support\Period::label($membership->grants_from_period) }}.
 @endif
 
 @if (filled($paymentInstructions))

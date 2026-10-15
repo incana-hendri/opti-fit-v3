@@ -61,8 +61,12 @@ it('includes the payment instructions and the first-month credits in the approva
         ->toContain('October');
 });
 
-it('promises the credits on the 1st when nothing was granted yet (C4)', function () {
-    expect((new MembershipApproved($this->membership, null))->render())->toContain('Your credits arrive on the 1st');
+it('says when the monthly credits start when nothing was granted now (C4)', function () {
+    $this->membership->update(['grants_from_period' => '2026-11']);
+
+    expect((new MembershipApproved($this->membership->fresh(), null))->render())
+        ->toContain('Your monthly credits start on 1 November')
+        ->not->toContain('arrive on the 1st');
 });
 
 it('shows the reason and the contact email in the decline email (C5)', function () {

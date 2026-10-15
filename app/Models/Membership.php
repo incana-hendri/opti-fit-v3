@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property int $monthly_price_cents
  * @property string|null $starts_period
  * @property string|null $ends_period
+ * @property string|null $grants_from_period
  * @property Carbon $requested_at
  * @property Carbon|null $approved_at
  */
@@ -83,6 +84,26 @@ class Membership extends Model
         $query->whereIn('status', [MembershipStatus::Active, MembershipStatus::Paused])
             ->where('starts_period', '<=', $period)
             ->where(fn (Builder $query) => $query->whereNull('ends_period')->orWhere('ends_period', '>=', $period));
+    }
+
+    /**
+     * BR-5.5 step 3: active, in effect, and past its first grant period.
+     *
+     * @param  Builder<Membership>  $query
+     */
+    public function scopeDueForGrant(Builder $query, string $period): void
+    {
+        $query->where('status', MembershipStatus::Active)
+            ->inEffect($period)
+            ->where('grants_from_period', '<=', $period);
+    }
+
+    public function isDueForGrant(string $period): bool
+    {
+        return $this->status === MembershipStatus::Active
+            && $this->isInEffect($period)
+            && $this->grants_from_period !== null
+            && $this->grants_from_period <= $period;
     }
 
     public function isInEffect(string $period): bool

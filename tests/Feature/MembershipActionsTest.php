@@ -150,6 +150,7 @@ it('grants the prorated first month once when approved for this month (BR-4.4, 4
     $entry = CreditEntry::query()->sole();
     expect($approved->status)->toBe(MembershipStatus::Active)
         ->and($approved->starts_period)->toBe('2026-10')
+        ->and($approved->grants_from_period)->toBe('2026-11') // this month is settled by the approval itself
         ->and($approved->approved_at)->not->toBeNull()
         ->and($approved->admin_note)->toBe('EFT ref 123')
         ->and($entry->type)->toBe(CreditEntryType::Grant)
@@ -197,6 +198,7 @@ it('grants nothing now when approved for next month, and the monthly job grants 
     $approved = approve(requestFor($user, Package::factory()->create()), '2026-11');
 
     expect($approved->starts_period)->toBe('2026-11')
+        ->and($approved->grants_from_period)->toBe('2026-11')
         ->and(CreditEntry::query()->count())->toBe(0);
     Mail::assertQueued(MembershipApproved::class, fn ($mail) => $mail->hasTo($user->email) && $mail->firstMonthCredits === null);
 });
@@ -229,6 +231,7 @@ it('ends the old membership this period and starts the change next period (BR-4.
     expect($old->fresh()->ends_period)->toBe('2026-10')
         ->and($old->fresh()->status)->toBe(MembershipStatus::Active)
         ->and($approved->starts_period)->toBe('2026-11')
+        ->and($approved->grants_from_period)->toBe('2026-11')
         ->and(CreditEntry::query()->count())->toBe(0)
         ->and($user->household->membershipInEffect('2026-10')->is($old))->toBeTrue()
         ->and($user->household->membershipInEffect('2026-11')->is($approved))->toBeTrue();
@@ -342,17 +345,22 @@ it('resumes at once when this month was already granted (BR-4.9)', function () {
     $resumed = app(ResumeMembership::class)->handle($membership);
 
     expect($resumed->status)->toBe(MembershipStatus::Active)
-        ->and($resumed->starts_period)->toBe('2026-09');
+        ->and($resumed->starts_period)->toBe('2026-09')
+        ->and($resumed->grants_from_period)->toBe('2026-11');
 });
 
-it('resumes from the next 1st when this month has no grant yet (BR-4.9)', function () {
-    $membership = activeMembership(customer(), '2026-09');
+it('resumes without rewriting the start and grants from the next 1st (BR-4.9)', function () {
+    $user = customer();
+    $membership = activeMembership($user, '2026-09');
     app(PauseMembership::class)->handle($membership);
 
     $resumed = app(ResumeMembership::class)->handle($membership);
 
     expect($resumed->status)->toBe(MembershipStatus::Active)
-        ->and($resumed->starts_period)->toBe('2026-11');
+        ->and($resumed->starts_period)->toBe('2026-09')
+        ->and($resumed->grants_from_period)->toBe('2026-11')
+        ->and($user->household->membershipInEffect()?->is($membership))->toBeTrue()
+        ->and($user->household->scheduledMembership())->toBeNull();
     expect(fn () => app(ResumeMembership::class)->handle($membership))->toThrow(MembershipException::class);
 });
 

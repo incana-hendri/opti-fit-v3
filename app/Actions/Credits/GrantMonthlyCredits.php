@@ -3,7 +3,6 @@
 namespace App\Actions\Credits;
 
 use App\Enums\CreditEntryType;
-use App\Enums\MembershipStatus;
 use App\Models\Household;
 use App\Models\Membership;
 use App\Support\CreditLedger;
@@ -21,7 +20,7 @@ class GrantMonthlyCredits
             $household = Household::whereKey($membership->household_id)->lockForUpdate()->firstOrFail();
             $membership = $household->memberships()->with('package')->findOrFail($membership->id);
 
-            if ($membership->status !== MembershipStatus::Active || ! $membership->isInEffect($period)) {
+            if (! $membership->isDueForGrant($period)) {
                 return false;
             }
 
