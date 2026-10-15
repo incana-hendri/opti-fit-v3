@@ -52,11 +52,8 @@
                     <p class="text-muted">Choose at least one family member to see what it costs.</p>
                 @else
                     <p class="text-sm text-muted">Your monthly package</p>
-                    <p class="mt-1">
-                        <span class="text-2xl font-semibold text-brand tabular-nums">{{ $credits }} credits / month</span>
-                        <span class="text-muted"> · </span>
-                        <span class="text-xl font-semibold tabular-nums whitespace-nowrap">{{ App\Support\Money::format($priceCents) }} / month</span>
-                    </p>
+                    <p class="mt-1 text-2xl font-semibold text-brand tabular-nums">{{ $credits }} credits / month</p>
+                    <p class="mt-1 text-xl font-semibold tabular-nums">{{ App\Support\Money::format($priceCents) }} / month</p>
                     <p class="mt-1 text-sm text-muted">{{ $package->name }} for {{ $count }} {{ Illuminate\Support\Str::plural('member', $count) }}.</p>
                 @endif
             </x-card>
