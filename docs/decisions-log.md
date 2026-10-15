@@ -89,6 +89,9 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · The scaffold `AccountWidget` is gone, and the dashboard is a one-column `Dashboard` page in the "Today" navigation group · docs/05 lists three widgets in that order
 - 2026-10-15 · The admin panel has its own Vite-built Filament theme (`resources/css/filament/admin/theme.css`, registered with `viteTheme()`) · the dashboard and Reports views use utility classes that Filament's prebuilt stylesheet doesn't contain; no new package, it is the documented way to style custom panel views
 - 2026-10-15 · Reports: the month picker offers the current month and the twelve before it, keeps the choice in the URL (`?month=2026-09`) and falls back to the current month for anything it doesn't offer; "Export CSV" downloads the sessions table of the chosen month as `optifit-sessions-YYYY-MM.csv` with the columns Date (`Y-m-d H:i`), Title, Capacity, Occupied, Fill %, Attended
+- 2026-10-15 · No milestone listed the Admins and Settings screens of docs/05, so M4 builds them (BR-9.1 "editable in admin", BR-9.4 "admins can create further admins")
+- 2026-10-15 · Admins (`AdminResource`, the users with role admin): list and create only, no edit and no delete (BR-9.5 forbids deleting customers; an admin who leaves is deactivated); create takes first name, last name, email, optional phone and either a password or "Send a set-password link", which emails the ordinary password reset (C2) and marks the email verified. After setting a password the admin logs in at `/login` and lands in `/admin` (BR-1.7). `DeactivateAdmin` refuses to deactivate yourself or the last active admin and locks all admin rows first · docs/05 § Admins
+- 2026-10-15 · `AccountException` is the domain exception for account rules (admins now, anonymising next) · the existing exceptions are per area and none fits
 
 ## Ideas (out of scope for now)
 
