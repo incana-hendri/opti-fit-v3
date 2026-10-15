@@ -27,7 +27,6 @@ class TodaysClasses extends Widget
         return ClassSession::query()
             ->scheduled()
             ->whereBetween('starts_at', [today(), today()->addDay()->endOfDay()])
-            ->with('location')
             ->withOccupancy()
             ->orderBy('starts_at')
             ->get()

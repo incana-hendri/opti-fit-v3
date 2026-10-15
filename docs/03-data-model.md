@@ -14,7 +14,7 @@ There are **14 app tables**. If you find yourself adding a fifteenth, check `AGE
 |---|---|---|
 | first_name, last_name | string | |
 | email | string unique | |
-| phone | string(20) | mobile, stored as entered, validated loosely (digits, +, spaces) |
+| phone | string(20) null | mobile, stored as entered, validated loosely (digits, +, spaces); required for customers, null for admins and anonymised users (BR-9.6) |
 | date_of_birth | date null | required for customers (BR-1.2), null for admins |
 | password | string | bcrypt (the import keeps existing `$2y$` hashes, which Laravel accepts) |
 | role | enum(`customer`,`admin`) default `customer` | |
