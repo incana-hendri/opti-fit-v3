@@ -151,3 +151,25 @@ it('schedules the below-minimum check at 06:00 (docs/07)', function () {
 
     expect($event)->not->toBeNull()->and($event->expression)->toBe('0 6 * * *');
 });
+
+it('only counts classes that have not started yet for the below-minimum email (A5)', function () {
+    Mail::fake();
+    $this->travelTo(Carbon::parse('2026-10-19 12:00'));
+    $this->session->update(['title' => 'Already done']);
+    classSession(['starts_at' => '2026-10-19 16:00', 'min_participants' => 5, 'title' => 'Still to come']);
+
+    $this->artisan('optifit:below-minimum')->assertSuccessful();
+
+    Mail::assertQueued(AdminBelowMinimum::class, fn (AdminBelowMinimum $mail) => $mail->sessions->pluck('title')->all() === ['Still to come']);
+});
+
+it('does not promise free cancellation in C12 once the new cutoff has passed', function () {
+    $this->session->update(['starts_at' => '2026-10-19 06:00']);
+    $mail = new SessionTimeChanged($this->session, Carbon::parse('2026-10-19 05:00'));
+
+    expect($mail->render())->toContain('Cancel for free until');
+
+    $this->travelTo(Carbon::parse('2026-10-18 23:00'));
+
+    expect($mail->render())->not->toContain('Cancel for free until')->toContain('free-cancellation time')->toContain('has already passed');
+});

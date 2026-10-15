@@ -8,7 +8,7 @@ use App\Models\Settings;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
-// A5 (BR-7.4, docs/06): at 06:00 the admins hear about today's sessions that are below their minimum. Silent when none are.
+// A5 (BR-7.4, docs/06): at 06:00 the admins hear about today's sessions that are below their minimum (those not started yet). Silent when none are.
 class NotifyBelowMinimum extends Command
 {
     protected $signature = 'optifit:below-minimum';
@@ -21,7 +21,7 @@ class NotifyBelowMinimum extends Command
             ->scheduled()
             ->withOccupancy()
             ->whereNotNull('min_participants')
-            ->whereBetween('starts_at', [today(), today()->endOfDay()])
+            ->whereBetween('starts_at', [now(), today()->endOfDay()])
             ->orderBy('starts_at')
             ->get()
             ->filter(fn (ClassSession $session) => $session->isBelowMinimum());

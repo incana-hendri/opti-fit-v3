@@ -36,10 +36,10 @@ class CancelBooking
             $beforeCutoff = ! Cutoff::hasPassed($session);
             $refund = $booking->credit_charged && ($by->isAdmin() ? ($returnCredit ?? $beforeCutoff) : $beforeCutoff);
 
-            // BR-6.1: a charged booking cancelled without its credit going back is a late cancellation, so "Return credit" can undo it.
+            // BR-7.7: late means after the cutoff, whoever cancels. "Return credit" (BR-6.1) works on any unrefunded cancellation.
             $booking->update([
                 'status' => BookingStatus::Cancelled,
-                'late_cancellation' => $by->isAdmin() ? $booking->credit_charged && ! $refund : ! $beforeCutoff,
+                'late_cancellation' => ! $beforeCutoff,
                 'cancelled_at' => now(),
                 'cancelled_by' => $by->id,
             ]);

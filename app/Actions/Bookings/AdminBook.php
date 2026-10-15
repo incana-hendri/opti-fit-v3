@@ -50,7 +50,10 @@ class AdminBook
             throw new BookingException('One of them is already booked into this class.');
         }
 
-        Mail::to($household->user->email)->queue(new BookingConfirmed($session, $bookings, $creditsLeft));
+        // "You're booked" makes no sense for a class that has already started (a walk-in added at the venue).
+        if ($session->starts_at->isFuture()) {
+            Mail::to($household->user->email)->queue(new BookingConfirmed($session, $bookings, $creditsLeft));
+        }
 
         return $bookings;
     }

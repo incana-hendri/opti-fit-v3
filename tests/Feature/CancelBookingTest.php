@@ -185,11 +185,22 @@ it('does not return a credit for a booking that is still booked or was free (BR-
     expect(fn () => app(ReturnCredit::class)->handle($free, $this->admin))->toThrow(CreditException::class, 'free');
 });
 
+it('flags a late cancellation by the clock, for the admin as for the customer (BR-7.7)', function () {
+    cancel($this, 0, $this->admin, false);
+
+    expect($this->bookings[0]->fresh()->late_cancellation)->toBeFalse();
+
+    $this->travelTo(Carbon::parse('2026-10-18 22:00'));
+    cancel($this, 1, $this->admin, true);
+
+    expect($this->bookings[1]->fresh()->late_cancellation)->toBeTrue();
+});
+
 it('lets an admin undo a cancellation that kept the credit (BR-6.1, 6.2)', function () {
     cancel($this, 0, $this->admin, false);
     $booking = $this->bookings[0]->fresh();
 
-    expect($booking->late_cancellation)->toBeTrue();
+    expect($booking->late_cancellation)->toBeFalse()->and($booking->canReturnCredit())->toBeTrue();
     app(ReturnCredit::class)->handle($booking, $this->admin);
 
     expect(CreditLedger::balance($this->household))->toBe(7);
@@ -275,4 +286,16 @@ it('refuses an admin booking for an archived member or one from another househol
 
     expect(fn () => app(AdminBook::class)->handle($this->household, $session, [$other->id], true, false, $this->admin))->toThrow(BookingException::class)
         ->and(fn () => app(AdminBook::class)->handle($this->household, $session, [$archived->id], true, false, $this->admin))->toThrow(BookingException::class);
+});
+
+it('sends no booking confirmation for an admin booking on a class that has already started (C8)', function () {
+    $this->travelTo(Carbon::parse('2026-10-19 05:30'));
+    Mail::fake();
+
+    $started = classSession(['starts_at' => '2026-10-19 04:00']);
+
+    app(AdminBook::class)->handle($this->household, $started, [$this->mia->id], false, false, $this->admin);
+
+    Mail::assertNothingQueued();
+    expect($started->bookings()->where('status', BookingStatus::Booked)->count())->toBe(1);
 });
