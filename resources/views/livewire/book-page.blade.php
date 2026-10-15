@@ -7,6 +7,22 @@
 <div class="space-y-6">
     <x-page-header title="Book a class" :subtitle="$balance.' '.Str::plural('credit', $balance).' left this month'" />
 
+    @if (! $hasPackage)
+        <x-status-card title="You need a package to book">
+            Choose a monthly package and we'll get your family booked in.
+            <x-slot:action>
+                <x-button href="{{ route('membership.request') }}">Choose a package</x-button>
+            </x-slot:action>
+        </x-status-card>
+    @elseif ($balance < 1)
+        <x-status-card title="You've used all your credits this month">
+            Your credits are back on the 1st. Questions? Get in touch with the studio.
+            <x-slot:action>
+                <x-button href="{{ route('membership') }}" variant="secondary">See my credits</x-button>
+            </x-slot:action>
+        </x-status-card>
+    @endif
+
     {{-- Sticky under the header so any day is one tap away while scrolling. --}}
     <div class="sticky top-14 z-20 -mx-4 bg-night/95 px-4 py-2 backdrop-blur lg:top-16 lg:mx-0 lg:px-0">
         <x-day-strip :days="$days" :selected="today()" />
@@ -22,18 +38,17 @@
 
             @forelse ($sessionsByDay->get($key, []) as $session)
                 @php($state = $states[$session->id])
-                @php($note = $state !== 'bookable' ? null : (! $hasPackage ? 'You need an active package before you can book.' : ($balance < 1 ? "You've used all your credits this month." : null)))
                 <x-session-card wire:key="session-{{ $session->id }}"
                     :time="$session->starts_at->format('H:i')" :title="$session->title" :location="$session->location->name"
-                    :duration="$session->duration_minutes" :places-left="$session->placesLeft()" :state="$state" :note="$note"
+                    :duration="$session->duration_minutes" :places-left="$session->placesLeft()" :state="$state"
                     :booked-members="$booked->get($session->id, collect())->pluck('member.first_name')->all()"
                     :closed-note="'Bookings close '.Cutoff::hoursFor($session).' hours before the class.'">
                     <x-slot:action>
                         @if ($state !== 'bookable')
                         @elseif (! $hasPackage)
-                            <x-button href="{{ route('membership.request') }}" variant="secondary" size="sm">Choose a package</x-button>
+                            <x-button href="{{ route('membership.request') }}" variant="secondary" size="sm">Get a package</x-button>
                         @elseif ($balance < 1)
-                            <x-button href="{{ route('membership') }}" variant="secondary" size="sm">No credits left</x-button>
+                            <x-button href="{{ route('membership') }}" variant="secondary" size="sm">No credits</x-button>
                         @else
                             <x-button size="sm" wire:click="openBook({{ $session->id }})">Book</x-button>
                         @endif

@@ -138,15 +138,15 @@ it('disables the button when the credits or places are not enough', function () 
 it('explains the problem and links to the fix without a package or without credits (docs/04)', function () {
     $noPackage = customer();
     Livewire::actingAs($noPackage)->test(BookPage::class)
-        ->assertSee('Choose a package')
-        ->assertSee('You need an active package before you can book.')
+        ->assertSee('You need a package to book')
+        ->assertSee('Get a package')
         ->assertSee(route('membership.request'));
 
     $empty = customer();
     activeMembership($empty);
     Livewire::actingAs($empty)->test(BookPage::class)
-        ->assertSee('No credits left')
-        ->assertSee("You've used all your credits this month.")
+        ->assertSee('No credits')
+        ->assertSee("You've used all your credits this month")
         ->assertSee(route('membership'));
 });
 

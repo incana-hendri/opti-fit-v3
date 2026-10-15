@@ -1,12 +1,12 @@
 {{--
     One class session on /book (docs/04).
     $state: bookable | closed | full | all-booked. Pass an `action` slot to replace the default button (an empty slot
-    shows no button), and `note` for a line of explanation under the details (e.g. why booking isn't possible).
+    shows no button).
     $bookedMembers: names of this household's members already booked.
 --}}
 @props([
     'time', 'title', 'location', 'duration' => 45, 'placesLeft',
-    'state' => 'bookable', 'bookedMembers' => [], 'closedNote' => 'Bookings close 8 hours before the class.', 'note' => null,
+    'state' => 'bookable', 'bookedMembers' => [], 'closedNote' => 'Bookings close 8 hours before the class.'
 ])
 
 @php($hasAction = isset($action) ? $action->isNotEmpty() : $state === 'bookable')
@@ -34,10 +34,6 @@
         </div>
 
         {{-- "Full" is already said by the places badge. --}}
-        @if ($note)
-            <p class="text-sm text-muted">{{ $note }}</p>
-        @endif
-
         @if ($state === 'closed')
             <p class="text-sm">
                 <span class="font-medium text-muted">Booking closed.</span>

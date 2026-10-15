@@ -33,6 +33,7 @@ class ClassSessionInfolist
                             ->state(fn (ClassSession $record) => $record->cutoffAt()->format('D j M, H:i')),
                         TextEntry::make('minimum')
                             ->label('Minimum')
+                            ->columnSpan(['default' => 2, 'md' => 1])
                             ->state(fn (ClassSession $record) => match (true) {
                                 $record->min_participants === null => 'No minimum',
                                 $record->isBelowMinimum() => "Below minimum ({$record->occupied()} of {$record->min_participants})",

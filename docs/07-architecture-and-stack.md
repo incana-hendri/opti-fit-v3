@@ -25,16 +25,16 @@ Allowed extra packages: the ones above only. Ask a human before adding another r
 ```
 app/
   Actions/            # the only place credits/bookings/memberships change
-    Bookings/   BookSession.php, CancelBooking.php, AdminBook.php, MarkAttendance.php
+    Bookings/   BookSession.php, CancelBooking.php, AdminBook.php, MarkAttendance.php, PlaceBooking.php (internal)
     Credits/    GrantMonthlyCredits.php, ExpireCredits.php, AdjustCredits.php, ReturnCredit.php
     Memberships/ RequestMembership.php, ApproveMembership.php, DeclineMembership.php,
                  CancelMembership.php, PauseMembership.php, ResumeMembership.php
     Sessions/   GenerateSessions.php, CancelSession.php, RescheduleSession.php
     Households/ AnonymiseHousehold.php
-  Console/Commands/   MakeAdmin.php, RunMonthlyCredits.php, ImportData.php
+  Console/Commands/   MakeAdmin.php, RunMonthlyCredits.php, NotifyBelowMinimum.php, ImportData.php
   Filament/           # resources, pages, widgets (see 05)
   Http/Controllers/   # thin; public pages, legal pages
-  Livewire/           # Onboarding, BookingSheet, BookingsList, Family, Membership, RequestForm
+  Livewire/           # Onboarding, Home, Family, MembershipPage, RequestForm, BookPage (with the booking sheet), BookingsPage
   Mail/               # one Mailable per row in 06
   Models/
   Policies/
@@ -63,7 +63,7 @@ Conventions:
 | When | Command |
 |---|---|
 | daily 00:05 | `optifit:monthly-credits` (BR-5.5; idempotent) |
-| daily 06:00 | below-minimum admin email (A5) |
+| daily 06:00 | `optifit:below-minimum` (A5: the admin email, only when a class today is below its minimum) |
 | every minute | `queue:work --stop-when-empty --max-time=50` (withoutOverlapping) |
 | daily 03:00 | `queue:prune-failed --hours=168`, `auth:clear-resets` |
 

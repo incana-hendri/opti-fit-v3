@@ -19,13 +19,14 @@
                 </h3>
                 <ul class="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
                     @foreach ($daySessions as $session)
-                        <li class="flex items-center gap-3 px-4 py-3 sm:gap-4">
-                            <p class="w-14 shrink-0 text-lg font-semibold tabular-nums">{{ $session->starts_at->format('H:i') }}</p>
-                            <div class="min-w-0 flex-1">
+                        {{-- On a phone the badge drops under the title, so the title keeps its width. --}}
+                        <li class="grid grid-cols-[3.5rem_1fr] items-center gap-x-3 gap-y-1.5 px-4 py-3 sm:grid-cols-[3.5rem_1fr_auto] sm:gap-x-4">
+                            <p class="text-lg font-semibold tabular-nums sm:row-start-1">{{ $session->starts_at->format('H:i') }}</p>
+                            <div class="min-w-0">
                                 <p class="font-medium">{{ $session->title }}</p>
                                 <p class="truncate text-sm text-muted">{{ $session->location->name }} · {{ $session->duration_minutes }} min</p>
                             </div>
-                            <x-places-badge :places-left="$session->placesLeft()" />
+                            <x-places-badge :places-left="$session->placesLeft()" class="col-start-2 justify-self-start sm:col-start-3 sm:row-start-1 sm:justify-self-end" />
                         </li>
                     @endforeach
                 </ul>

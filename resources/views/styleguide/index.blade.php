@@ -106,8 +106,8 @@
             <x-session-card time="15:30" title="Afternoon Functional Fitness" location="Gene Louw Activity Centre" :places-left="0" state="full" />
             <x-session-card time="05:00" title="Morning Functional Fitness" location="Gene Louw Activity Centre" :places-left="5" state="closed" closed-note="It closed at Sun 2 Nov 21:00." />
             <x-session-card time="16:00" title="Afternoon Functional Fitness" location="Gene Louw Activity Centre" :places-left="6" state="all-booked" :booked-members="['Anna', 'Mia']" />
-            <x-session-card time="05:00" title="Morning Functional Fitness" location="Gene Louw Activity Centre" :places-left="9" note="You need an active package before you can book.">
-                <x-slot:action><x-button href="#" variant="secondary" size="sm">Choose a package</x-button></x-slot:action>
+            <x-session-card time="05:00" title="Morning Functional Fitness" location="Gene Louw Activity Centre" :places-left="9">
+                <x-slot:action><x-button href="#" variant="secondary" size="sm">Get a package</x-button></x-slot:action>
             </x-session-card>
         </section>
 
