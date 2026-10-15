@@ -216,3 +216,20 @@ it('stops counting a deletion request once the household is anonymised (BR-1.6)'
         ->test(ListHouseholds::class)
         ->assertCanNotSeeTableRecords([$household->fresh()]);
 });
+
+it('locks the household first and then the sessions of the bookings it cancels (BR-7.6)', function () {
+    [, $household] = erasableHousehold();
+    $locks = [];
+    DB::listen(function ($query) use (&$locks) {
+        if (str_contains($query->sql, 'for update')) {
+            $locks[] = preg_match('/from `(\w+)`/', $query->sql, $table) ? $table[1] : $query->sql;
+        }
+    });
+
+    app(AnonymiseHousehold::class)->handle($household, $this->admin);
+
+    $households = array_search('households', $locks, true);
+    $sessions = array_search('class_sessions', $locks, true);
+
+    expect($households)->toBe(0)->and($sessions)->toBeInt()->toBeGreaterThan($households);
+});

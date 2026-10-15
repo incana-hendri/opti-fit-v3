@@ -7,6 +7,7 @@ use App\Actions\Memberships\WithdrawMembershipRequest;
 use App\Enums\BookingStatus;
 use App\Enums\MembershipStatus;
 use App\Exceptions\AccountException;
+use App\Models\ClassSession;
 use App\Models\Household;
 use App\Models\Member;
 use App\Models\User;
@@ -97,17 +98,20 @@ class AnonymiseHousehold
         $household->memberships()->update(['customer_note' => null]);
     }
 
-    // No refund: nothing is owed to a household that asked to be erased (BR-9.6).
+    // No refund: nothing is owed to a household that asked to be erased (BR-9.6). Household first, then the sessions in id order (BR-7.6).
     private function cancelFutureBookings(Household $household, User $by): void
     {
-        $household->bookings()
+        $bookings = $household->bookings()
             ->where('status', BookingStatus::Booked)
-            ->whereHas('classSession', fn ($session) => $session->where('starts_at', '>', now()))
-            ->update([
-                'status' => BookingStatus::Cancelled,
-                'late_cancellation' => false,
-                'cancelled_at' => now(),
-                'cancelled_by' => $by->id,
-            ]);
+            ->whereHas('classSession', fn ($session) => $session->where('starts_at', '>', now()));
+
+        ClassSession::query()->whereIn('id', (clone $bookings)->select('class_session_id'))->orderBy('id')->lockForUpdate()->get();
+
+        $bookings->update([
+            'status' => BookingStatus::Cancelled,
+            'late_cancellation' => false,
+            'cancelled_at' => now(),
+            'cancelled_by' => $by->id,
+        ]);
     }
 }
