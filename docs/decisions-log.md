@@ -92,6 +92,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · No milestone listed the Admins and Settings screens of docs/05, so M4 builds them (BR-9.1 "editable in admin", BR-9.4 "admins can create further admins")
 - 2026-10-15 · Admins (`AdminResource`, the users with role admin): list and create only, no edit and no delete (BR-9.5 forbids deleting customers; an admin who leaves is deactivated); create takes first name, last name, email, optional phone and either a password or "Send a set-password link", which emails the ordinary password reset (C2) and marks the email verified. After setting a password the admin logs in at `/login` and lands in `/admin` (BR-1.7). `DeactivateAdmin` refuses to deactivate yourself or the last active admin and locks all admin rows first · docs/05 § Admins
 - 2026-10-15 · `AccountException` is the domain exception for account rules (admins now, anonymising next) · the existing exceptions are per area and none fits
+- 2026-10-15 · Settings (`Filament/Pages/Settings`, Setup group): one form with every BR-9.1 field; notification emails must each be valid and are stored trimmed and comma-separated, the cutoff is 0–48 hours, the booking window 1–31 days, `terms_version` is `YYYY-MM`; it saves through the model so `Settings::current()` is refreshed straight away
 
 ## Ideas (out of scope for now)
 
