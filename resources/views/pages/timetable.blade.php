@@ -13,6 +13,6 @@
             </x-slot:actions>
         </x-page-header>
 
-        <x-timetable-list :sessions="$sessions" />
+        <x-timetable-list :sessions="$sessions" :level="2" />
     </div>
 </x-layouts.public>

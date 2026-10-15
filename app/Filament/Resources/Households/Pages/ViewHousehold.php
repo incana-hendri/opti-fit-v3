@@ -95,6 +95,8 @@ class ViewHousehold extends ViewRecord
                     $admin = Auth::user();
                     app(AnonymiseHousehold::class)->handle($record, $admin);
                     Notification::make()->title('Household anonymised')->success()->send();
+                    // Reload, so the page shows the scrubbed data and the actions that still apply.
+                    $this->redirect(HouseholdResource::getUrl('view', ['record' => $record]));
                 } catch (AccountException $exception) {
                     Notification::make()->title($exception->getMessage())->danger()->send();
                 }

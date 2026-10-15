@@ -5,6 +5,7 @@ use App\Enums\BookingStatus;
 use App\Enums\CreditEntryType;
 use App\Enums\MembershipStatus;
 use App\Exceptions\AccountException;
+use App\Filament\Resources\Households\HouseholdResource;
 use App\Filament\Resources\Households\Pages\ListHouseholds;
 use App\Filament\Resources\Households\Pages\ViewHousehold;
 use App\Filament\Widgets\NeedsAttention;
@@ -182,7 +183,7 @@ it('needs the typed confirmation on the household page (BR-9.6)', function () {
     $page()->callAction('anonymise', ['confirmation' => 'yes please'])->assertHasActionErrors(['confirmation']);
     expect($household->fresh()->isAnonymised())->toBeFalse();
 
-    $page()->callAction('anonymise', ['confirmation' => 'ANONYMISE'])->assertHasNoActionErrors()->assertNotified('Household anonymised');
+    $page()->callAction('anonymise', ['confirmation' => 'ANONYMISE'])->assertHasNoActionErrors()->assertNotified('Household anonymised')->assertRedirect(HouseholdResource::getUrl('view', ['record' => $household]));
     expect($household->fresh()->isAnonymised())->toBeTrue();
 });
 

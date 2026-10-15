@@ -58,8 +58,8 @@
                     <thead>
                         <tr class="border-b border-gray-200 text-gray-500 dark:border-white/10 dark:text-gray-400">
                             <th scope="col" class="py-2 pe-4 text-start font-medium">Date</th>
-                            <th scope="col" class="py-2 pe-4 text-start font-medium">Class</th>
-                            <th scope="col" class="py-2 pe-4 text-end font-medium">Capacity</th>
+                            <th scope="col" class="hidden py-2 pe-4 text-start font-medium sm:table-cell">Class</th>
+                            <th scope="col" class="hidden py-2 pe-4 text-end font-medium sm:table-cell">Capacity</th>
                             <th scope="col" class="py-2 pe-4 text-end font-medium">Occupied</th>
                             <th scope="col" class="py-2 pe-4 text-end font-medium">Fill</th>
                             <th scope="col" class="py-2 text-end font-medium">Attended</th>
@@ -68,9 +68,10 @@
                     <tbody class="divide-y divide-gray-100 dark:divide-white/10">
                         @foreach ($sessions as $session)
                             <tr>
-                                <td class="whitespace-nowrap py-2 pe-4 tabular-nums">{{ $session['startsAt']->format('D j M, H:i') }}</td>
-                                <td class="py-2 pe-4">{{ $session['title'] }}</td>
-                                <td class="py-2 pe-4 text-end tabular-nums">{{ $session['capacity'] }}</td>
+                                {{-- On a phone the class name sits under the date and the capacity column is dropped, so the table fits. --}}
+                                <td class="py-2 pe-4"><span class="tabular-nums">{{ $session['startsAt']->format('D j M, H:i') }}</span><span class="block text-gray-500 sm:hidden dark:text-gray-400">{{ $session['title'] }}</span></td>
+                                <td class="hidden py-2 pe-4 sm:table-cell">{{ $session['title'] }}</td>
+                                <td class="hidden py-2 pe-4 text-end tabular-nums sm:table-cell">{{ $session['capacity'] }}</td>
                                 <td class="py-2 pe-4 text-end tabular-nums">{{ $session['occupied'] }}</td>
                                 <td class="py-2 pe-4 text-end tabular-nums">{{ $session['fillPercent'] }}%</td>
                                 <td class="py-2 text-end tabular-nums">{{ $session['attended'] }}</td>

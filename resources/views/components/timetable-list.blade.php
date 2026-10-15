@@ -2,7 +2,7 @@
     Read-only timetable for the public pages (docs/04 § /timetable and Landing): sessions grouped by day.
     $sessions: ClassSession models with `location` loaded and withOccupancy().
 --}}
-@props(['sessions', 'empty' => 'No classes are scheduled yet. Check back soon.'])
+@props(['sessions', 'empty' => 'No classes are scheduled yet. Check back soon.', 'level' => 3])
 
 @php($days = $sessions->groupBy(fn ($session) => $session->starts_at->format('Y-m-d')))
 
@@ -24,10 +24,10 @@
         @foreach ($days as $date => $daySessions)
             @php($day = \Illuminate\Support\Carbon::parse($date))
             <section aria-labelledby="timetable-{{ $date }}">
-                <h3 id="timetable-{{ $date }}" class="mb-2 text-base font-semibold">
+                <h{{ $level }} id="timetable-{{ $date }}" class="mb-2 text-base font-semibold">
                     {{ $day->isToday() ? 'Today' : ($day->isTomorrow() ? 'Tomorrow' : $day->format('l')) }}
                     <span class="font-normal text-muted">{{ $day->format('j M') }}</span>
-                </h3>
+                </h{{ $level }}>
                 <ul class="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
                     @foreach ($daySessions as $session)
                         {{-- On a phone the badge drops under the title, so the title keeps its width. --}}

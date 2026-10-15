@@ -38,7 +38,7 @@ Defined as CSS custom properties in `brand/tokens.css` and mapped into Tailwind 
 | `--of-text-subtle` | `#9A96A8` | Tertiary text, placeholders (≥ 4.5:1 on night) |
 | `--of-success` | `#2ED573` | Places available, success toasts, "Attended" |
 | `--of-danger` | `#FF4757` | Errors, destructive actions, "Full" |
-| `--of-info` | `#5B7CFA` | Informational badges (sparingly) |
+| `--of-info` | `#7B95FF` | Informational badges (sparingly); ≥ 4.5:1 as text on its own 15% tint |
 | `--of-ink` | `#0D0918` | **Text on orange**. White on orange fails contrast, so orange buttons always use night text |
 
 Light surfaces (emails, print) use white `#FFFFFF`, page `#F4F3F7`, text `#1A1A1A`, muted `#555555`, and
