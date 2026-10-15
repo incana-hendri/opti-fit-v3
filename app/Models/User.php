@@ -16,9 +16,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
 /**
  * @property Role $role
+ * @property Carbon|null $date_of_birth
+ * @property Carbon|null $deactivated_at
  */
 #[Fillable(['first_name', 'last_name', 'email', 'phone', 'date_of_birth', 'password', 'marketing_opt_in'])]
 #[Hidden(['password', 'remember_token'])]

@@ -57,10 +57,11 @@ class HouseholdsTable
                     ->label('Flags')
                     ->badge()
                     ->state(fn (Household $record): array => array_values(array_filter([
-                        $record->user->deletion_requested_at ? 'Deletion requested' : null,
+                        $record->isAnonymised() ? 'Anonymised' : null,
+                        $record->user->deletion_requested_at && ! $record->isAnonymised() ? 'Deletion requested' : null,
                         $record->user->isDeactivated() ? 'Deactivated' : null,
                     ])))
-                    ->color(fn (string $state) => $state === 'Deactivated' ? 'gray' : 'danger'),
+                    ->color(fn (string $state) => $state === 'Deletion requested' ? 'danger' : 'gray'),
             ])
             ->filters([
                 // BR-1.6: the dashboard's "Deletion requests" links here.
