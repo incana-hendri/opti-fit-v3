@@ -52,6 +52,16 @@ it('refreshes the roster\'s tables when a header action on the page adds a booki
         ->assertDispatched('refresh-page');
 });
 
+it('refreshes the sidebar badges after an action, so the pending-requests count is current', function () {
+    [$session] = rosterWithOneBooking();
+    $user = bookingCustomer();
+    $member = $user->household->members->first();
+
+    Livewire::test(ViewClassSession::class, ['record' => $session->id])
+        ->callAction('addBooking', ['household_id' => $user->household->id, 'member_ids' => [$member->id], 'charge' => true, 'over_capacity' => false])
+        ->assertDispatched('refresh-sidebar');
+});
+
 it('re-renders the Bookings table when the page tells it to, showing a booking added elsewhere', function () {
     [$session] = rosterWithOneBooking();
     $table = Livewire::test(BookingsRelationManager::class, ['ownerRecord' => $session, 'pageClass' => ViewClassSession::class]);

@@ -34,8 +34,12 @@ class AppServiceProvider extends ServiceProvider
         View::composer('components.layouts.public', fn ($view) => $view->with(['settings' => Settings::current(), 'venue' => Location::venue()]));
 
         // Admins see the result of an action at once, wherever it shows: after any admin action the page and its relation
-        // managers all re-render (Filament pages listen for `refresh-page`, our relation managers too).
-        Event::listen(ActionCalled::class, fn (Action $action) => $action->getLivewire()->dispatch('refresh-page'));
+        // managers all re-render (Filament pages listen for `refresh-page`, our relation managers too), and so does the
+        // sidebar with its pending-requests badge (`refresh-sidebar`).
+        Event::listen(ActionCalled::class, function (Action $action): void {
+            $action->getLivewire()?->dispatch('refresh-page');
+            $action->getLivewire()?->dispatch('refresh-sidebar');
+        });
 
         // docs/06: replies to any email go to the studio's contact email.
         Event::listen(function (MessageSending $event): void {
