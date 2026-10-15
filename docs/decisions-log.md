@@ -23,7 +23,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-14 · Onboarding creates the household at step 1 and resumes at the first unfinished step. "Onboarded" means at least one active member; the `customer` middleware sends anyone else to `/onboarding` · progress saved per step (docs/04) without an extra column; archiving everyone sends the customer back to add a member
 - 2026-10-14 · Onboarding step 1 asks the account holder's gender when they train (docs/04 updated) · BR-2.3 requires gender on a member and `users` has no gender column
 - 2026-10-14 · In M1 onboarding "Finish" went to `/home`; since M2 it goes to `/membership/request` with the toast "Last step: choose your package" (docs/04) · the request form now exists
-- 2026-10-14 · `Member::canBeDeleted()` always returns true until M3 adds bookings and its BR-2.5 check · no bookings can exist before then
+- 2026-10-15 · `Member::canBeDeleted()` is false for a member any membership (active, ended or requested) covers, so they can only be archived, and the /family menu and onboarding hide Delete and Remove for them; M3 adds bookings to the same check (BR-2.5) · deleting one hit the `membership_member` foreign key and gave the customer a 500
 - 2026-10-14 · Archive and delete confirmations use the brand sheet, not `wire:confirm` · native browser dialogs can't be styled and block automated browser checks
 - 2026-10-14 · The admin household resource has list and view pages only · customers create and edit their own household; docs/05 lists no admin create or edit
 - 2026-10-14 · Reply-To is added to every outgoing email by one `MessageSending` listener using `Settings::current()->contact_email` · covers Fortify notifications and Mailables in one place (docs/06)

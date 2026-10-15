@@ -164,7 +164,7 @@ class Onboarding extends Component
     public function render(): View
     {
         return view('livewire.onboarding', [
-            'members' => $this->household()?->activeMembers()->oldest()->get() ?? collect(),
+            'members' => $this->household()?->activeMembers()->withCount('memberships')->oldest()->get() ?? collect(),
             'genders' => Gender::options(),
         ])->layout('components.layouts.auth')->title('Welcome');
     }

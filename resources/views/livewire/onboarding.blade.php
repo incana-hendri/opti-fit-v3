@@ -54,7 +54,9 @@
                             </div>
                             @unless ($member->is_account_holder)
                                 <x-button variant="ghost" size="sm" wire:click="editMember({{ $member->id }})">Edit</x-button>
-                                <x-button variant="ghost" size="sm" class="text-muted" wire:click="removeMember({{ $member->id }})" aria-label="Remove {{ $member->first_name }}">Remove</x-button>
+                                @if ($member->canBeDeleted())
+                                    <x-button variant="ghost" size="sm" class="text-muted" wire:click="removeMember({{ $member->id }})" aria-label="Remove {{ $member->first_name }}">Remove</x-button>
+                                @endif
                             @endunless
                         </li>
                     @endforeach
