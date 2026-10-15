@@ -31,7 +31,7 @@ class ThisMonth extends StatsOverviewWidget
         return [
             Stat::make('Active memberships', $report->activeMemberships()),
             Stat::make('Expected monthly income', Money::format($report->monthlyIncome()))
-                ->description('From active memberships'),
+                ->description('Active and ending memberships this month'),
             Stat::make('Bookings', $totals['bookings']),
             Stat::make('Attendance rate', $totals['attendanceRate'] === null ? '—' : $totals['attendanceRate'].'%')
                 ->description('Attended of attended and no-shows'),

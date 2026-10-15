@@ -83,7 +83,7 @@
         @endif
     </x-filament::section>
 
-    <x-filament::section heading="Memberships" description="Active at the end of the month.">
+    <x-filament::section heading="Memberships" description="Active in the month, including those ending this month.">
         @if ($memberships === [])
             <p class="text-gray-500 dark:text-gray-400">No active memberships in this month.</p>
         @else
