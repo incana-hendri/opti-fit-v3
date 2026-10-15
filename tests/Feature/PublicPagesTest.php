@@ -25,6 +25,7 @@ it('previews the error pages outside production with their status codes', functi
 
 it('hides the error previews in production and for other codes', function () {
     $this->get('/_styleguide/errors/418')->assertNotFound()->assertDontSee('418');
+    $this->get('/_styleguide/errors/99999999999999999999')->assertNotFound();
 
     app()->detectEnvironment(fn () => 'production');
 

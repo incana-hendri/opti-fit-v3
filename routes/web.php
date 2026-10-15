@@ -68,11 +68,11 @@ Route::prefix('_styleguide')->group(function () {
     });
 
     // Previews of the error pages (docs/04), with their real status codes, for visual QA.
-    Route::get('/errors/{code}', function (int $code) {
-        abort_if(app()->isProduction() || ! in_array($code, [403, 404, 419, 500, 503], true), 404);
+    Route::get('/errors/{code}', function (string $code) {
+        abort_if(app()->isProduction(), 404);
 
-        return response()->view("errors.{$code}", [], $code);
-    })->whereNumber('code');
+        return response()->view("errors.{$code}", [], (int) $code);
+    })->whereIn('code', ['403', '404', '419', '500', '503']);
 
     Route::get('/auth', function () {
         abort_if(app()->isProduction(), 404);
