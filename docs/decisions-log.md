@@ -104,6 +104,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · Anonymising redirects back to the household page so it shows the scrubbed data and only the actions that still apply
 - 2026-10-15 · Production-only security settings (`APP_ENV=production`, `APP_DEBUG=false`, `SESSION_SECURE_COOKIE=true`, the web root being `public/`) can't be proven by a test: `.env.example` carries them as comments and M5's `docs/deploy.md` carries them as server steps. HTTPS being forced in production, the session id changing on login, the admin panel's login throttle and a CSRF token in every POST form are tested
 - 2026-10-15 · `/_styleguide/errors/{403,404,419,500,503}` preview the branded error pages with their real status codes, and 404 in production like the rest of the styleguide · they can't be reached any other way for visual QA
+- 2026-10-15 · After any admin action, everything on the page refreshes: `AppServiceProvider` listens for Filament's `ActionCalled` event (fired after every action, header, row and bulk alike) and dispatches the `refresh-page` Livewire event, which Filament's pages already listen for and which our six relation managers listen for through the `RefreshesWithPage` trait · the roster's Bookings and Guests tables, the household's tabs and the page's own facts are separate Livewire components, so an action in one left the others stale until a reload; one event for every action means a new action or table needs no extra code (a new relation manager only adds the trait)
 
 ## Ideas (out of scope for now)
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ClassSessions\RelationManagers;
 
+use App\Filament\Concerns\RefreshesWithPage;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 // The Guests table on the roster (docs/05 § Sessions; BR-9.3): they take places and cost no credits.
 class GuestsRelationManager extends RelationManager
 {
+    use RefreshesWithPage;
+
     protected static string $relationship = 'guestEntries';
 
     protected static ?string $title = 'Guests';
