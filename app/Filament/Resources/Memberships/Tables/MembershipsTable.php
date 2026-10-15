@@ -6,6 +6,7 @@ use App\Filament\Resources\Memberships\Actions\MembershipActions;
 use App\Models\Membership;
 use App\Support\Money;
 use App\Support\Period;
+use Filament\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,13 +46,16 @@ class MembershipsTable
                     ->state(fn (Membership $record) => self::periods($record))
                     ->visibleFrom('lg'),
             ])
+            // One menu per row: separate buttons run off the edge of a phone screen (docs/05: usable on a phone).
             ->recordActions([
-                MembershipActions::approve(),
-                MembershipActions::decline(),
-                MembershipActions::edit(),
-                MembershipActions::pause(),
-                MembershipActions::resume(),
-                MembershipActions::cancelNow(),
+                ActionGroup::make([
+                    MembershipActions::approve(),
+                    MembershipActions::decline(),
+                    MembershipActions::edit(),
+                    MembershipActions::pause(),
+                    MembershipActions::resume(),
+                    MembershipActions::cancelNow(),
+                ]),
             ]);
     }
 

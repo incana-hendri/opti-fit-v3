@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Packages\Tables;
 use App\Models\Package;
 use App\Support\Money;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
@@ -43,24 +44,27 @@ class PackagesTable
                     ->label('Active')
                     ->boolean(),
             ])
+            // One menu per row: separate buttons run off the edge of a phone screen (docs/05: usable on a phone).
             ->recordActions([
-                EditAction::make(),
-                // BR-3.3: archiving keeps existing memberships and hides the package from new requests.
-                Action::make('archive')
-                    ->icon(Heroicon::OutlinedArchiveBox)
-                    ->color('gray')
-                    ->visible(fn (Package $record) => $record->is_active)
-                    ->requiresConfirmation()
-                    ->modalDescription('Existing memberships continue. The package is hidden from the pricing page and new requests.')
-                    ->action(fn (Package $record) => $record->update(['is_active' => false])),
-                Action::make('unarchive')
-                    ->icon(Heroicon::OutlinedArrowUturnLeft)
-                    ->color('gray')
-                    ->visible(fn (Package $record) => ! $record->is_active)
-                    ->action(fn (Package $record) => $record->update(['is_active' => true])),
-                // BR-3.4: only a package that no membership ever used can be deleted.
-                DeleteAction::make()
-                    ->visible(fn (Package $record) => $record->isDeletable()),
+                ActionGroup::make([
+                    EditAction::make(),
+                    // BR-3.3: archiving keeps existing memberships and hides the package from new requests.
+                    Action::make('archive')
+                        ->icon(Heroicon::OutlinedArchiveBox)
+                        ->color('gray')
+                        ->visible(fn (Package $record) => $record->is_active)
+                        ->requiresConfirmation()
+                        ->modalDescription('Existing memberships continue. The package is hidden from the pricing page and new requests.')
+                        ->action(fn (Package $record) => $record->update(['is_active' => false])),
+                    Action::make('unarchive')
+                        ->icon(Heroicon::OutlinedArrowUturnLeft)
+                        ->color('gray')
+                        ->visible(fn (Package $record) => ! $record->is_active)
+                        ->action(fn (Package $record) => $record->update(['is_active' => true])),
+                    // BR-3.4: only a package that no membership ever used can be deleted.
+                    DeleteAction::make()
+                        ->visible(fn (Package $record) => $record->isDeletable()),
+                ]),
             ]);
     }
 }
