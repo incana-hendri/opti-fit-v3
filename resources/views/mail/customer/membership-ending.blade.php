@@ -7,7 +7,7 @@ Credits you already have stay usable until then. You won't get new credits after
 
 Changed your mind? You can undo this until the month ends.
 
-<x-mail::button :url="url('/membership')">
+<x-mail::button :url="route('membership')">
 Undo cancellation
 </x-mail::button>
 </x-mail::message>

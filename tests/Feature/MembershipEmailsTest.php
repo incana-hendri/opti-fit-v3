@@ -93,6 +93,6 @@ it('shows the last day and the undo link in the ending emails (C13, A3)', functi
     $this->membership->update(['ends_period' => '2026-10']);
     $membership = $this->membership->fresh();
 
-    expect((new MembershipEnding($membership))->render())->toContain('Sat 31 Oct')->toContain(url('/membership'))
+    expect((new MembershipEnding($membership))->render())->toContain('Sat 31 Oct')->toContain(route('membership'))
         ->and((new AdminMembershipEnding($membership))->render())->toContain('Sat 31 Oct');
 });

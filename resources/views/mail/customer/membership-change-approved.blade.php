@@ -11,7 +11,7 @@ Until then your current package carries on, and the credits you already have sta
 
 @include('mail.partials.membership-details')
 
-<x-mail::button :url="url('/membership')">
+<x-mail::button :url="route('membership')">
 View my membership
 </x-mail::button>
 </x-mail::message>
