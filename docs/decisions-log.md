@@ -22,8 +22,8 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-14 · Public footer has the venue address hard-coded · locations arrive in M3; the footer can read the active location then
 - 2026-10-14 · Onboarding creates the household at step 1 and resumes at the first unfinished step. "Onboarded" means at least one active member; the `customer` middleware sends anyone else to `/onboarding` · progress saved per step (docs/04) without an extra column; archiving everyone sends the customer back to add a member
 - 2026-10-14 · Onboarding step 1 asks the account holder's gender when they train (docs/04 updated) · BR-2.3 requires gender on a member and `users` has no gender column
-- 2026-10-14 · Until M2, onboarding "Finish" goes to `/home`, and Home's "Choose a package" links to `/membership/request` (built in M2) · the request form doesn't exist yet
-- 2026-10-14 · `Member::canBeDeleted()` always returns true until M3 adds bookings and its BR-2.5 check · no bookings can exist before then
+- 2026-10-14 · In M1 onboarding "Finish" went to `/home`; since M2 it goes to `/membership/request` with the toast "Last step: choose your package" (docs/04) · the request form now exists
+- 2026-10-15 · `Member::canBeDeleted()` is false for a member any membership (active, ended or requested) covers, so they can only be archived, and the /family menu and onboarding hide Delete and Remove for them; M3 adds bookings to the same check (BR-2.5) · deleting one hit the `membership_member` foreign key and gave the customer a 500
 - 2026-10-14 · Archive and delete confirmations use the brand sheet, not `wire:confirm` · native browser dialogs can't be styled and block automated browser checks
 - 2026-10-14 · The admin household resource has list and view pages only · customers create and edit their own household; docs/05 lists no admin create or edit
 - 2026-10-14 · Reply-To is added to every outgoing email by one `MessageSending` listener using `Settings::current()->contact_email` · covers Fortify notifications and Mailables in one place (docs/06)
@@ -31,6 +31,27 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-14 · Livewire's generator is set to class-based components without emoji names (`config/livewire.php`) · docs/07 puts components in `app/Livewire`
 - 2026-10-14 · Models declare cast types (`Carbon`, enums) with `@property` · Larastan doesn't apply types from the `casts()` method here, and the PHPDoc states the real type
 - 2026-10-14 · The admin households table shows household (with account holder underneath) and flags on phones; email, members and phone appear from wider screens · docs/05 asks for tables that work on the owner's phone
+- 2026-10-14 · `credit_entries.booking_id` is a plain nullable unsigned bigint with no foreign key until M3 · the `bookings` table doesn't exist yet; M3 adds the FK
+- 2026-10-14 · `CreditLedger` lives in `app/Support` as a final class with static `balance()` and `write()` · docs/07 allows static methods or a small class; it is the only code that inserts `credit_entries`, and `write()` refuses to run outside a transaction
+- 2026-10-14 · Domain failures are `MembershipException` and `CreditException` (both `RuntimeException`) · docs/07 names `BookingException`-style exceptions per area; two tiny classes keep customer-safe messages separate from bugs
+- 2026-10-14 · A customer can't cancel (or undo a cancellation) while a package change is scheduled for next month · the old membership's `ends_period` is what hands over to the new one, so changing it would leave a gap or an overlap (BR-4.1, 4.7); the page explains why and asks them to contact the studio
+- 2026-10-14 · A customer can cancel only an `active` membership, not a `paused` one · BR-4.8 says "active"; the page tells paused customers to contact the studio
+- 2026-10-14 · Approving a request is refused while the household already has a package starting next month · it would overlap (BR-4.1); the admin cancels the scheduled one first
+- 2026-10-15 · Memberships have a `grants_from_period` column (the user approved the new column on 2026-10-15; docs/03 updated, added to the original migration): the first period the monthly job may grant. Approval sets it to `starts_period` for a next-period start and to the next period for a current-period start (the approval itself settles this month, even with 0 credits); resuming sets it to `max(existing, next period)` and never touches `starts_period` · the job used to treat "no grant row for this period" as "a grant is due", so a 0-credit approval got a full grant the next morning, and the earlier fix of rewriting `starts_period` on resume falsified "Active since", dropped the membership out of effect for the rest of the month (BR-4.10) and made an ending membership look like a scheduled one
+- 2026-10-14 · Cancel now (admin) sets `ends_period` to the current period only if the membership has already started; a membership that never started keeps `ends_period` null · nothing was ever granted for it
+- 2026-10-14 · "Used" on the Home credit card is bookings less refunds this period, so 0 until M3 adds bookings · there is nothing else that uses credits
+- 2026-10-14 · The "Book your first class" (C4) and "Book now" (C7) email buttons link to `/home` until M3 adds `/book` · the target doesn't exist yet
+- 2026-10-14 · The request form (`/membership/request`) has an "I'll do this later" link to `/home` · docs/04 says the customer can skip after onboarding, and the form is where onboarding now ends
+- 2026-10-14 · The pricing page's "5+" shows the price of the top tier at or below 5 members and the credits for 5 members with a "+" · BR-3.6 asks for a 1…5+ selector; the top tier already means "or more"
+- 2026-10-14 · Pricing and request pages show "≈ R{price ÷ credits} per class" rounded to the whole rand · docs/04 gives no rounding
+- 2026-10-14 · `PackageFactory` creates standard price tiers by default (`pricedAt()` replaces them) · a package without a tier for 1 member is invalid (BR-3.2)
+- 2026-10-14 · The membership list is a Filament table with row actions only (no create, edit or view page); approve, decline, pause, resume, cancel now and edit are modals calling the Actions · customers create memberships, and docs/05 lists only these actions
+- 2026-10-14 · The scheduler registers `optifit:monthly-credits`, the queue worker and the 03:00 housekeeping now; the 06:00 below-minimum email (A5) arrives in M3 · A5 needs sessions
+- 2026-10-14 · `DemoSeeder` writes its data with factories and `CreditLedger` rather than the actions, and is a no-op when `admin@optifit.test` exists · running the actions would queue emails for fake customers
+- 2026-10-15 · Row actions on the admin Packages and Memberships tables sit in one menu per row · separate buttons ran off the edge at 390px and the owner approves requests from a phone (docs/05)
+- 2026-10-15 · `DemoSeeder` dates last month's ledger rows last month (it fakes the clock while writing them) · the history on `/membership` and the Credits tab then reads like real data
+- 2026-10-15 · A request is refused up front while a package change is already scheduled, and the request form says "Your package already changes on 1 {Month}" · approval always refuses it (BR-4.1), so the customer would otherwise wait for nothing
+- 2026-10-15 · New `x-status-card` component (title, text, optional action) for Home's "no package", "request pending" and "package starts" cards, listed in docs/08 and `/_styleguide` · the card was repeated three times (AGENTS.md: a pattern needed twice becomes a component)
 
 ## Ideas (out of scope for now)
 

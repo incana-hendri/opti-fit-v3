@@ -1,7 +1,11 @@
 <?php
 
 use App\Livewire\Family;
+use App\Livewire\Onboarding;
+use App\Models\Household;
 use App\Models\Member;
+use App\Models\Membership;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
@@ -161,4 +165,65 @@ it("can't archive another household's member by tampering with the pending actio
         ->assertNotFound();
 
     expect($someoneElses->fresh()->isArchived())->toBeFalse();
+});
+
+it('marks the members covered by the active membership (BR-4.10)', function () {
+    $user = customer(2);
+    $covered = $user->household->members->first();
+    $membership = activeMembership($user);
+    $membership->members()->sync([$covered->id]);
+
+    Livewire::actingAs($user)->test(Family::class)
+        ->assertViewHas('coveredIds', [$covered->id])
+        ->assertSee('Covered by your package');
+});
+
+it('marks nobody as covered without an active membership (BR-4.10)', function () {
+    $user = customer();
+    Membership::factory()->for($user->household)->paused()->create();
+
+    Livewire::actingAs($user)->test(Family::class)
+        ->assertViewHas('coveredIds', [])
+        ->assertDontSee('Covered by your package');
+});
+
+it("doesn't offer delete for a member any membership covers, only archive (BR-2.5)", function () {
+    $user = customer(2);
+    $covered = $user->household->members->first();
+    Membership::factory()->for($user->household)->cancelled()->create()->members()->sync([$covered->id]);
+
+    expect($covered->canBeDeleted())->toBeFalse()
+        ->and($user->household->members->last()->canBeDeleted())->toBeTrue();
+
+    Livewire::actingAs($user)->test(Family::class)
+        ->assertDontSee('confirmDelete('.$covered->id.')', false)
+        ->assertSee('confirmDelete('.$user->household->members->last()->id.')', false);
+});
+
+it('ignores a delete of a member a membership covers instead of failing (BR-2.5)', function () {
+    $user = customer();
+    $covered = $user->household->members->first();
+    Membership::factory()->for($user->household)->create();
+
+    Livewire::actingAs($user)->test(Family::class)
+        ->call('confirmDelete', $covered->id)
+        ->assertSet('pending', null)
+        ->set('pending', ['action' => 'delete', 'memberId' => $covered->id])
+        ->call('runPending')
+        ->assertOk();
+
+    expect(Member::query()->find($covered->id))->not->toBeNull();
+});
+
+it('keeps a covered member when removed in onboarding (BR-2.5)', function () {
+    $user = User::factory()->create();
+    $household = Household::factory()->withoutEmergencyContact()->onboarded(2)->for($user)->create();
+    $covered = $household->members->last();
+    Membership::factory()->for($household)->create()->members()->sync([$covered->id]);
+
+    Livewire::actingAs($user)->test(Onboarding::class)
+        ->call('removeMember', $covered->id)
+        ->assertOk();
+
+    expect(Member::query()->find($covered->id))->not->toBeNull();
 });

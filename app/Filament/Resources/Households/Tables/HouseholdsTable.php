@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Households\Tables;
 
 use App\Models\Household;
+use App\Support\Period;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -13,7 +14,10 @@ class HouseholdsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with('user')->withCount('activeMembers'))
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->with(['user', 'membershipsInEffect.package'])
+                ->withCount('activeMembers')
+                ->withSum(['creditEntries as current_balance' => fn ($entries) => $entries->where('period', Period::current())], 'amount'))
             ->defaultSort('name')
             ->columns([
                 TextColumn::make('name')
@@ -33,6 +37,18 @@ class HouseholdsTable
                     ->visibleFrom('lg'),
                 TextColumn::make('active_members_count')
                     ->label('Members')
+                    ->numeric()
+                    ->sortable()
+                    ->visibleFrom('md'),
+                TextColumn::make('membership')
+                    ->badge()
+                    ->state(fn (Household $record) => $record->membershipsInEffect->first()?->status->label() ?? 'None')
+                    ->color(fn (Household $record) => $record->membershipsInEffect->first()?->status->filamentColor() ?? 'gray')
+                    ->description(fn (Household $record) => $record->membershipsInEffect->first()?->package->name)
+                    ->visibleFrom('md'),
+                TextColumn::make('current_balance')
+                    ->label('Balance')
+                    ->state(fn (Household $record) => (int) $record->current_balance)
                     ->numeric()
                     ->sortable()
                     ->visibleFrom('md'),

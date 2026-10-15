@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\PricingController;
 use App\Http\Controllers\RequestAccountDeletionController;
 use App\Livewire\Family;
+use App\Livewire\Home;
+use App\Livewire\MembershipPage;
 use App\Livewire\Onboarding;
+use App\Livewire\RequestForm;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
@@ -10,12 +14,15 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 
 Route::view('/', 'pages.landing')->name('landing');
+Route::get('/pricing', PricingController::class)->name('pricing');
 
 // Signed-in customers (docs/04). Auth pages themselves are registered by Fortify.
 Route::middleware(['auth', 'verified', 'customer'])->group(function () {
     Route::get('/onboarding', Onboarding::class)->name('onboarding');
-    Route::view('/home', 'customer.home')->name('home');
+    Route::get('/home', Home::class)->name('home');
     Route::get('/family', Family::class)->name('family');
+    Route::get('/membership', MembershipPage::class)->name('membership');
+    Route::get('/membership/request', RequestForm::class)->name('membership.request');
     Route::view('/account', 'customer.account')->name('account');
     Route::post('/account/deletion-request', RequestAccountDeletionController::class)->name('account.deletion-request');
 });

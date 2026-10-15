@@ -157,14 +157,14 @@ class Onboarding extends Component
             'emergency_contact_phone' => $this->emergencyPhone,
         ]);
 
-        return redirect()->route('home')
-            ->with('toast', ['message' => "You're all set! Last step: choose your package.", 'type' => 'success']);
+        return redirect()->route('membership.request')
+            ->with('toast', ['message' => 'Last step: choose your package', 'type' => 'success']);
     }
 
     public function render(): View
     {
         return view('livewire.onboarding', [
-            'members' => $this->household()?->activeMembers()->oldest()->get() ?? collect(),
+            'members' => $this->household()?->activeMembers()->withCount('memberships')->oldest()->get() ?? collect(),
             'genders' => Gender::options(),
         ])->layout('components.layouts.auth')->title('Welcome');
     }

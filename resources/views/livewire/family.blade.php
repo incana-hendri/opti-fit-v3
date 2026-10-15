@@ -19,6 +19,9 @@
                         @if ($member->is_account_holder) <span class="text-sm font-normal text-subtle">(you)</span> @endif
                     </p>
                     <p class="text-sm text-muted">{{ $member->age() }} years · {{ $member->gender->label() }}</p>
+                    @if (in_array($member->id, $coveredIds, true))
+                        <x-badge color="success" class="mt-1">Covered by your package</x-badge>
+                    @endif
                 </div>
                 <div x-data="{ open: false }" class="relative" @click.outside="open = false" @keydown.escape="open = false">
                     <button type="button" @click="open = ! open" :aria-expanded="open.toString()" aria-haspopup="menu"

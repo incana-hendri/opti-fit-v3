@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Enums\Gender;
+use App\Enums\MembershipStatus;
 use App\Livewire\Forms\MemberForm;
 use App\Models\Household;
 use App\Models\Member;
@@ -126,14 +127,26 @@ class Family extends Component
 
     public function render(): View
     {
-        $members = $this->household()->members()->orderByDesc('is_account_holder')->oldest()->get();
+        $members = $this->household()->members()->withCount('memberships')->orderByDesc('is_account_holder')->oldest()->get();
 
         return view('livewire.family', [
             'activeMembers' => $members->reject->isArchived(),
             'archivedMembers' => $members->filter->isArchived(),
+            // BR-4.10: covered means part of the active membership in effect now.
+            'coveredIds' => $this->coveredMemberIds(),
             'pendingMember' => $this->pending ? $members->firstWhere('id', $this->pending['memberId']) : null,
             'genders' => Gender::options(),
         ])->title('Family');
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function coveredMemberIds(): array
+    {
+        $membership = $this->household()->membershipInEffect();
+
+        return $membership?->status === MembershipStatus::Active ? $membership->members()->pluck('members.id')->all() : [];
     }
 
     private function user(): User
