@@ -101,6 +101,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · Accessibility pass (axe on every public and customer page at 390px, a keyboard check of the skip link and the sheet's focus, a 320px overflow check on every page): `--of-info` moved from `#5B7CFA` to `#7B95FF` because the info badge text was 4.1:1 on its tint; the other token pairs used for text already pass 4.5:1 (docs/08 updated); days without classes in the `/book` strip are dimmed with a lighter fill and text colour instead of `opacity-50` (2.5:1); the public timetable page uses `h2` day headings under its `h1` and the landing page keeps `h3` under its `h2`; booking cards on `/bookings` are `article`s, not named `section` landmarks
 - 2026-10-15 · The skip link exists in the public and customer layouts, not on the auth card pages and the error pages, which have a single column and nothing to skip · docs/04 asks for it on pages with navigation
 - 2026-10-15 · Anonymising redirects back to the household page so it shows the scrubbed data and only the actions that still apply
+- 2026-10-15 · Production-only security settings (`APP_ENV=production`, `APP_DEBUG=false`, `SESSION_SECURE_COOKIE=true`, the web root being `public/`) can't be proven by a test: `.env.example` carries them as comments and M5's `docs/deploy.md` carries them as server steps. HTTPS being forced in production, the session id changing on login, the admin panel's login throttle and a CSRF token in every POST form are tested
 
 ## Ideas (out of scope for now)
 
