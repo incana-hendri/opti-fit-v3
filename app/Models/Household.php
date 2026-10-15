@@ -5,15 +5,18 @@ namespace App\Models;
 use App\Enums\MembershipStatus;
 use App\Support\Period;
 use Database\Factories\HouseholdFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * An account holder and their family members (BR-2.1). Owns the credit balance.
  *
+ * @property Carbon|null $anonymised_at
  * @property int|null $current_balance only present when loaded with withSum(), e.g. in the admin list
  */
 class Household extends Model
@@ -28,6 +31,22 @@ class Household extends Model
         return [
             'anonymised_at' => 'datetime',
         ];
+    }
+
+    /**
+     * BR-1.6: an account holder asked for deletion and nobody has anonymised the household yet.
+     *
+     * @param  Builder<Household>  $query
+     */
+    public function scopeDeletionRequested(Builder $query): void
+    {
+        $query->whereNull('anonymised_at')
+            ->whereHas('user', fn (Builder $user) => $user->whereNotNull('deletion_requested_at'));
+    }
+
+    public function isAnonymised(): bool
+    {
+        return $this->anonymised_at !== null;
     }
 
     /**
