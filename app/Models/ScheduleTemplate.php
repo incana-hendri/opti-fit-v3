@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Weekday;
 use Database\Factories\ScheduleTemplateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * A weekly slot that "Generate sessions" turns into class sessions (BR-8.1).
  *
- * @property int $weekday ISO: 1 = Monday ... 7 = Sunday
+ * @property Weekday $weekday
  * @property string $start_time HH:MM:SS
  * @property int $duration_minutes
  * @property int $capacity
@@ -29,7 +30,7 @@ class ScheduleTemplate extends Model
     protected function casts(): array
     {
         return [
-            'weekday' => 'integer',
+            'weekday' => Weekday::class,
             'duration_minutes' => 'integer',
             'capacity' => 'integer',
             'min_participants' => 'integer',

@@ -39,6 +39,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             // Self-hosted Poppins from the Vite build; Filament's default provider loads it from Bunny Fonts.
             ->font('Poppins', url: fn (): string => Vite::asset('resources/css/fonts.css'), provider: LocalFontProvider::class)
+            // docs/05: the order of the sidebar groups.
+            ->navigationGroups(['Classes', 'Members', 'Setup'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

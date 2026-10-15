@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Households;
 
 use App\Filament\Resources\Households\Pages\ListHouseholds;
 use App\Filament\Resources\Households\Pages\ViewHousehold;
+use App\Filament\Resources\Households\RelationManagers\BookingsRelationManager;
 use App\Filament\Resources\Households\RelationManagers\CreditsRelationManager;
 use App\Filament\Resources\Households\RelationManagers\MembershipsRelationManager;
 use App\Filament\Resources\Households\RelationManagers\MembersRelationManager;
@@ -48,6 +49,7 @@ class HouseholdResource extends Resource
         return [
             MembersRelationManager::class,
             CreditsRelationManager::class,
+            BookingsRelationManager::class,
             MembershipsRelationManager::class,
         ];
     }

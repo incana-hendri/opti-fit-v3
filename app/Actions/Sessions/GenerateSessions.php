@@ -51,7 +51,7 @@ class GenerateSessions
         $startsAt = [];
 
         for ($day = Carbon::instance($from)->startOfDay(); $day->lte($to); $day->addDay()) {
-            if ($day->dayOfWeekIso === $template->weekday) {
+            if ($day->dayOfWeekIso === $template->weekday->value) {
                 $startsAt[] = $day->copy()->setTimeFromTimeString($template->start_time);
             }
         }
