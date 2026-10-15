@@ -83,6 +83,7 @@ class RequestForm extends Component
             'priceCents' => $package && $selected->isNotEmpty() ? $package->priceFor($selected->count()) : 0,
             'hasEmergencyContact' => $household->hasEmergencyContact(),
             'pending' => $household->pendingRequest(),
+            'scheduled' => $household->scheduledMembership(),
             'changing' => $household->membershipInEffect() !== null,
         ])->title('Choose your package');
     }

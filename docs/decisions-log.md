@@ -50,6 +50,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-14 · `DemoSeeder` writes its data with factories and `CreditLedger` rather than the actions, and is a no-op when `admin@optifit.test` exists · running the actions would queue emails for fake customers
 - 2026-10-15 · Row actions on the admin Packages and Memberships tables sit in one menu per row · separate buttons ran off the edge at 390px and the owner approves requests from a phone (docs/05)
 - 2026-10-15 · `DemoSeeder` dates last month's ledger rows last month (it fakes the clock while writing them) · the history on `/membership` and the Credits tab then reads like real data
+- 2026-10-15 · A request is refused up front while a package change is already scheduled, and the request form says "Your package already changes on 1 {Month}" · approval always refuses it (BR-4.1), so the customer would otherwise wait for nothing
 
 ## Ideas (out of scope for now)
 

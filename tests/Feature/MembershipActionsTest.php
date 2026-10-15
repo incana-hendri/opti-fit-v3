@@ -411,3 +411,13 @@ it('only edits active or paused memberships (BR-4.9)', function () {
     expect(fn () => app(UpdateMembership::class)->handle($requested, 8, 52000, $requested->members->pluck('id')->all(), null))
         ->toThrow(MembershipException::class);
 });
+
+it('refuses a new request while a package change is already scheduled (BR-4.1, 4.7)', function () {
+    $user = customer();
+    activeMembership($user, '2026-09', ['ends_period' => '2026-10']);
+    activeMembership($user, '2026-11');
+
+    expect(fn () => requestFor($user, Package::factory()->create()))
+        ->toThrow(MembershipException::class, 'already changes on 1 November');
+    expect(Membership::query()->where('status', MembershipStatus::Requested)->count())->toBe(0);
+});

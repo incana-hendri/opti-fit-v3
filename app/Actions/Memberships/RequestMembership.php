@@ -10,6 +10,7 @@ use App\Models\Household;
 use App\Models\Membership;
 use App\Models\Package;
 use App\Models\Settings;
+use App\Support\Period;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -31,6 +32,12 @@ class RequestMembership
 
             if (! $household->hasEmergencyContact()) {
                 throw new MembershipException('Please add an emergency contact before requesting a package.');
+            }
+
+            // An approval is refused while a change is scheduled (BR-4.1), so don't let the request wait for nothing.
+            $scheduled = $household->scheduledMembership();
+            if ($scheduled !== null) {
+                throw new MembershipException('Your package already changes on 1 '.Period::label((string) $scheduled->starts_period).'. You can request another change after that.');
             }
 
             if ($household->pendingRequest() !== null) {

@@ -5,6 +5,7 @@ use App\Mail\AdminMembershipRequest;
 use App\Mail\MembershipRequested;
 use App\Models\Membership;
 use App\Models\Package;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 
@@ -143,4 +144,15 @@ it("can't request an archived package by tampering with the form (BR-3.3)", func
 
 it('lets a visitor in only when signed in', function () {
     $this->get('/membership/request')->assertRedirect(route('login'));
+});
+
+it('explains that a scheduled package change blocks a new request (BR-4.7)', function () {
+    $this->travelTo(Carbon::parse('2026-10-16 10:00'));
+    $user = customer();
+    activeMembership($user, '2026-09', ['ends_period' => '2026-10']);
+    activeMembership($user, '2026-11');
+
+    Livewire::actingAs($user)->test(RequestForm::class)
+        ->assertSee('Your package already changes on 1 November')
+        ->assertDontSee('Send request');
 });

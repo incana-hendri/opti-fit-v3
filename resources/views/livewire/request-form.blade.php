@@ -8,6 +8,12 @@
             <p class="mt-1 text-muted">We need someone to call if something happens during a class before we can set up your package.</p>
             <x-button href="{{ route('family') }}" class="mt-5">Add emergency contact</x-button>
         </x-card>
+    @elseif ($scheduled)
+        <x-card>
+            <p class="text-lg font-semibold">Your package already changes on 1 {{ App\Support\Period::label($scheduled->starts_period) }}</p>
+            <p class="mt-1 text-muted">Until then your current package carries on. You can request another change after that.</p>
+            <x-button href="{{ route('membership') }}" class="mt-5">View my membership</x-button>
+        </x-card>
     @elseif ($pending)
         <x-card>
             <p class="text-lg font-semibold">Your request is waiting for approval</p>
