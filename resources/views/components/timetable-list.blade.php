@@ -7,7 +7,18 @@
 @php($days = $sessions->groupBy(fn ($session) => $session->starts_at->format('Y-m-d')))
 
 @if ($days->isEmpty())
-    <x-empty-state title="Nothing scheduled" icon="heroicon-o-calendar-days">{{ $empty }}</x-empty-state>
+    <x-empty-state title="Nothing scheduled" icon="heroicon-o-calendar-days">
+        {{ $empty }}
+        @guest
+            <x-slot:action>
+                <x-button href="{{ route('register') }}" variant="secondary">Join OptiFit</x-button>
+            </x-slot:action>
+        @elseif (! auth()->user()->isAdmin())
+            <x-slot:action>
+                <x-button href="{{ route('home') }}" variant="secondary">Back to Home</x-button>
+            </x-slot:action>
+        @endguest
+    </x-empty-state>
 @else
     <div {{ $attributes->class('space-y-6') }}>
         @foreach ($days as $date => $daySessions)
