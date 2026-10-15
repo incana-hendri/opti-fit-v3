@@ -25,6 +25,9 @@ final class MonthReport
     /** @var array{bookings: int, attended: int, noShows: int, lateCancellations: int, cancellations: int, guestPlaces: int, attendanceRate: int|null}|null */
     private ?array $totals = null;
 
+    /** @var list<array{package: string, count: int, income: int}>|null */
+    private ?array $memberships = null;
+
     public function __construct(public readonly string $period) {}
 
     /**
@@ -97,33 +100,16 @@ final class MonthReport
     }
 
     /**
-     * Memberships active at the end of the month, per package, in the packages' display order. For a month that
-     * has closed, memberships that have since ended count too; one paused today can't be told from one that was
-     * active then, so paused memberships are left out.
+     * Memberships active in the month, per package, in the packages' display order: active ones, plus cancelled ones
+     * whose last period (`ends_period`) is this month or later, because their credits stand until the month ends.
+     * The same rule applies inside the month and after it closes. A paused membership is never counted: the data
+     * doesn't say when it was paused.
      *
      * @return list<array{package: string, count: int, income: int}>
      */
     public function memberships(): array
     {
-        return Membership::query()
-            ->with('package')
-            ->where('starts_period', '<=', $this->period)
-            ->where(fn (Builder $ends) => $ends->whereNull('ends_period')->orWhere('ends_period', '>=', $this->period))
-            ->where(fn (Builder $status) => $status
-                ->where('status', MembershipStatus::Active)
-                ->when($this->period < Period::current(), fn (Builder $past) => $past->orWhere(fn (Builder $cancelled) => $cancelled
-                    ->where('status', MembershipStatus::Cancelled)
-                    ->whereNotNull('ends_period'))))
-            ->get()
-            ->sortBy(fn (Membership $membership) => [$membership->package->sort_order, $membership->package_id])
-            ->groupBy('package_id')
-            ->map(fn ($group) => [
-                'package' => $group->first()->package->name,
-                'count' => $group->count(),
-                'income' => (int) $group->sum('monthly_price_cents'),
-            ])
-            ->values()
-            ->all();
+        return $this->memberships ??= $this->computeMemberships();
     }
 
     public function activeMemberships(): int
@@ -137,6 +123,32 @@ final class MonthReport
     public function monthlyIncome(): int
     {
         return array_sum(array_column($this->memberships(), 'income'));
+    }
+
+    /**
+     * @return list<array{package: string, count: int, income: int}>
+     */
+    private function computeMemberships(): array
+    {
+        return Membership::query()
+            ->with('package')
+            ->where('starts_period', '<=', $this->period)
+            ->where(fn (Builder $ends) => $ends->whereNull('ends_period')->orWhere('ends_period', '>=', $this->period))
+            ->where(fn (Builder $status) => $status
+                ->where('status', MembershipStatus::Active)
+                ->orWhere(fn (Builder $cancelled) => $cancelled
+                    ->where('status', MembershipStatus::Cancelled)
+                    ->whereNotNull('ends_period')))
+            ->get()
+            ->sortBy(fn (Membership $membership) => [$membership->package->sort_order, $membership->package_id])
+            ->groupBy('package_id')
+            ->map(fn ($group) => [
+                'package' => $group->first()->package->name,
+                'count' => $group->count(),
+                'income' => (int) $group->sum('monthly_price_cents'),
+            ])
+            ->values()
+            ->all();
     }
 
     /**

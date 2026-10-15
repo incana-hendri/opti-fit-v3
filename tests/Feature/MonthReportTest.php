@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Memberships\CancelMembershipNow;
 use App\Enums\CreditEntryType;
 use App\Models\Booking;
 use App\Models\ClassSession;
@@ -10,6 +11,7 @@ use App\Models\Membership;
 use App\Models\Package;
 use App\Support\MonthReport;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 // docs/05 § Dashboard and Reports: one class computes the month's numbers for both.
 beforeEach(function () {
@@ -144,7 +146,7 @@ it('counts the memberships active at month end per package, with income', functi
     $make($twice, 52000)->paused()->create();
     $make($once, 28000)->create();
     $make($once, 28000)->active('2026-11')->create();
-    // Cancelled now, in October: not active at the end of the month.
+    // Cancelled now, in October: its credits stand until the month ends, so it counts in October.
     $make($once, 28000)->active('2026-09')->state(['status' => 'cancelled', 'ends_period' => '2026-10'])->create();
     // Cancelled after September: it was active at the end of September.
     $make($twice, 52000)->cancelled()->state(['starts_period' => '2026-08', 'ends_period' => '2026-09'])->create();
@@ -152,13 +154,47 @@ it('counts the memberships active at month end per package, with income', functi
     $october = new MonthReport('2026-10');
 
     expect($october->memberships())->toBe([
-        ['package' => 'Once a week', 'count' => 2, 'income' => 56000],
+        ['package' => 'Once a week', 'count' => 3, 'income' => 84000],
         ['package' => 'Twice a week', 'count' => 1, 'income' => 78000],
     ])
-        ->and($october->activeMemberships())->toBe(3)
-        ->and($october->monthlyIncome())->toBe(134000)
+        ->and($october->activeMemberships())->toBe(4)
+        ->and($october->monthlyIncome())->toBe(162000)
         ->and((new MonthReport('2026-09'))->memberships())->toBe([
             ['package' => 'Once a week', 'count' => 2, 'income' => 56000],
             ['package' => 'Twice a week', 'count' => 2, 'income' => 130000],
         ]);
+});
+
+it('counts a membership cancelled during the month the same inside the month and after it closes', function () {
+    $membership = Membership::factory()->active('2026-09')->create();
+    app(CancelMembershipNow::class)->handle($membership);
+
+    $inside = (new MonthReport('2026-10'))->activeMemberships();
+    $this->travelTo(Carbon::parse('2026-11-02 09:00'));
+    $after = (new MonthReport('2026-10'))->activeMemberships();
+
+    expect($inside)->toBe(1)->and($after)->toBe(1);
+});
+
+it('never counts a paused membership, inside the month or after it', function () {
+    Membership::factory()->paused()->create();
+
+    expect((new MonthReport('2026-10'))->activeMemberships())->toBe(0);
+    $this->travelTo(Carbon::parse('2026-11-02 09:00'));
+    expect((new MonthReport('2026-10'))->activeMemberships())->toBe(0);
+});
+
+it('queries the memberships once however often the report asks', function () {
+    Membership::factory()->active()->create();
+    $queries = 0;
+    DB::listen(function ($query) use (&$queries) {
+        $queries += str_contains($query->sql, 'from `memberships`') ? 1 : 0;
+    });
+    $report = new MonthReport('2026-10');
+
+    $report->memberships();
+    $report->activeMemberships();
+    $report->monthlyIncome();
+
+    expect($queries)->toBe(1);
 });
