@@ -24,8 +24,8 @@ use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 /**
- * Local demo data: an admin, three households in different membership states, two weeks of sessions and some
- * bookings (docs/03 § Seed data). Run with `sail artisan db:seed --class=DemoSeeder`.
+ * Local demo data: two admins, four households in different states (active, a request, ending, asked to be deleted), last
+ * month's classes and two weeks of sessions with bookings (docs/03 § Seed data). Run with `sail artisan db:seed --class=DemoSeeder`.
  */
 class DemoSeeder extends Seeder
 {
@@ -48,11 +48,16 @@ class DemoSeeder extends Seeder
         User::factory()->admin()->create([
             'first_name' => 'Demo', 'last_name' => 'Admin', 'email' => self::ADMIN_EMAIL,
         ]);
+        // A second admin, so the Admins screen has more than one row.
+        User::factory()->admin()->create([
+            'first_name' => 'Studio', 'last_name' => 'Owner', 'email' => 'owner@optifit.test',
+        ]);
 
         DB::transaction(function () {
             $this->smiths();
             $this->joneses();
             $this->bothas();
+            $this->pretorius();
             $this->timetable();
         });
 
@@ -72,19 +77,42 @@ class DemoSeeder extends Seeder
         $previous = Period::previous();
         $current = Period::current();
         $membership = $this->membership($household, '2× per week', ['Anna', 'Mia', 'Liam'], $previous);
+        $clock = Carbon::getTestNow();
 
         // Last month's rows are dated last month and its expiry the morning after, as the monthly job would have written them.
         Carbon::setTestNow(Period::firstDay($previous)->setTime(0, 5));
         $this->grant($household, $membership, $previous);
         Carbon::setTestNow(Period::firstDay($previous)->addDays(9)->setTime(18, 30));
         CreditLedger::write($household, $previous, CreditEntryType::Adjustment, -3, 'Adjustment: Used at a school event');
+        $this->lastMonth($household->user, $previous);
         Carbon::setTestNow(Period::firstDay($current)->setTime(0, 5));
-        CreditLedger::write($household, $previous, CreditEntryType::Expiry, -(24 - 3), 'Unused '.Period::label($previous).' credits expired', key: "expiry:{$household->id}:{$previous}");
+        CreditLedger::write($household, $previous, CreditEntryType::Expiry, -CreditLedger::balance($household, $previous), 'Unused '.Period::label($previous).' credits expired', key: "expiry:{$household->id}:{$previous}");
         $this->grant($household, $membership, $current);
-        Carbon::setTestNow();
+        Carbon::setTestNow($clock);
 
         CreditLedger::write($household, Period::current(), CreditEntryType::Adjustment, 2, 'Adjustment: Make-up for a cancelled class');
         CreditLedger::write($household, Period::current(), CreditEntryType::Adjustment, -1, 'Adjustment: Correction');
+    }
+
+    /**
+     * Last month's classes with attendance, so the Reports month picker has a month to show. Runs with the clock set to
+     * last month, so the ledger rows land in last month's period.
+     */
+    private function lastMonth(User $smiths, string $previous): void
+    {
+        app(GenerateSessions::class)->handle(ScheduleTemplate::query()->where('is_active', true)->get(), Period::firstDay($previous), Period::lastDay($previous));
+
+        $sessions = ClassSession::query()->whereBetween('starts_at', [Period::firstDay($previous), Period::lastDay($previous)->endOfDay()])->orderBy('starts_at')->get()->values();
+
+        // Six classes attended, one left unmarked (it counts as attended after 24 hours, BR-7.9), a no-show and a late cancellation.
+        foreach ($sessions->take(8)->values() as $index => $session) {
+            match (true) {
+                $index === 5 => $this->book($smiths, $session, ['Anna', 'Mia']),
+                $index === 6 => $this->book($smiths, $session, ['Liam'], BookingStatus::NoShow),
+                $index === 7 => $this->book($smiths, $session, ['Mia'], BookingStatus::Cancelled, true),
+                default => $this->book($smiths, $session, $index % 2 === 0 ? ['Anna', 'Mia'] : ['Mia', 'Liam'], BookingStatus::Attended),
+            };
+        }
     }
 
     // A first request that is waiting for the admin.
@@ -117,6 +145,17 @@ class DemoSeeder extends Seeder
         $this->grant($household, $membership, Period::current());
     }
 
+    // Asked for their account to be deleted: the Needs attention widget counts it and "Anonymise household" has a target.
+    private function pretorius(): void
+    {
+        $household = $this->household('Elna', 'Pretorius', 'pretorius@optifit.test', [
+            ['Elna', 'Pretorius', '1979-05-04', Gender::Female, true],
+            ['Karl', 'Pretorius', '2012-10-27', Gender::Male, false],
+        ]);
+
+        $household->user->forceFill(['deletion_requested_at' => now()->subDays(2)])->save();
+    }
+
     /**
      * Sessions from a week ago to two weeks ahead, then bookings that cover every state the screens show: next up, an
      * everyone-booked class, a full class, a guest, a class below its minimum today, and past attendance.
@@ -147,6 +186,11 @@ class DemoSeeder extends Seeder
         foreach ($past->values()->take(count($attendance)) as $index => $session) {
             [$name, $status, $late] = $attendance[$index];
             $this->book($smiths, $session, [$name], $status, $late);
+        }
+
+        // The Bothas came to the next two past classes, so the month's attendance is not only the Smiths'.
+        foreach ($past->values()->skip(count($attendance))->take(2) as $session) {
+            $this->book($botha, $session, ['Carla', 'Emma'], BookingStatus::Attended);
         }
     }
 
