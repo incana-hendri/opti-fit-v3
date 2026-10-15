@@ -67,6 +67,13 @@ Route::prefix('_styleguide')->group(function () {
         return view('styleguide.app', ['user' => new User(['first_name' => 'Anna', 'last_name' => 'Smith'])]);
     });
 
+    // Previews of the error pages (docs/04), with their real status codes, for visual QA.
+    Route::get('/errors/{code}', function (int $code) {
+        abort_if(app()->isProduction() || ! in_array($code, [403, 404, 419, 500, 503], true), 404);
+
+        return response()->view("errors.{$code}", [], $code);
+    })->whereNumber('code');
+
     Route::get('/auth', function () {
         abort_if(app()->isProduction(), 404);
 

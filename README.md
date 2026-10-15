@@ -49,7 +49,7 @@ cp .env.example .env
 - Customer site: http://localhost
 - Admin panel: http://localhost/admin
 - Mailpit (outgoing mail): http://localhost:8025
-- Component styleguide (not in production): http://localhost/_styleguide
+- Component styleguide (not in production): http://localhost/_styleguide; error page previews: http://localhost/_styleguide/errors/500 (also 403, 404, 419, 503)
 - Public timetable: http://localhost/timetable
 - Admin dashboard, reports (with a CSV of the month's sessions), settings and admins: http://localhost/admin
 - Tests: `./vendor/bin/sail composer test` (includes `tests/Concurrency`, which starts real PHP processes to prove two bookings can't take the last place) · style: `sail composer lint` · static analysis: `sail composer analyse`

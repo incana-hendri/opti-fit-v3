@@ -103,6 +103,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · The skip link exists in the public and customer layouts, not on the auth card pages and the error pages, which have a single column and nothing to skip · it comes from the accessibility pass (docs/04's keyboard and focus requirements) and only helps on pages with navigation
 - 2026-10-15 · Anonymising redirects back to the household page so it shows the scrubbed data and only the actions that still apply
 - 2026-10-15 · Production-only security settings (`APP_ENV=production`, `APP_DEBUG=false`, `SESSION_SECURE_COOKIE=true`, the web root being `public/`) can't be proven by a test: `.env.example` carries them as comments and M5's `docs/deploy.md` carries them as server steps. HTTPS being forced in production, the session id changing on login, the admin panel's login throttle and a CSRF token in every POST form are tested
+- 2026-10-15 · `/_styleguide/errors/{403,404,419,500,503}` preview the branded error pages with their real status codes, and 404 in production like the rest of the styleguide · they can't be reached any other way for visual QA
 
 ## Ideas (out of scope for now)
 
