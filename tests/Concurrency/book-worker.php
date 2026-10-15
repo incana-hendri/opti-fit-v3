@@ -2,7 +2,8 @@
 
 /*
  * A separate PHP process for BookingConcurrencyTest (BR-7.6). It waits for a shared start time, so that several
- * workers reach the household lock together, then books and prints "booked" or "refused: <reason>".
+ * workers reach the household lock together, then books. It prints "ready <time>" when it reaches the barrier and
+ * then "booked" or "refused: <reason>".
  *
  * Usage: php book-worker.php <now> <start-at> <household-id> <session-id> <user-id> <member-id,member-id,...>
  */
@@ -23,6 +24,8 @@ $app->make(Kernel::class)->bootstrap();
 [, $now, $startAt, $householdId, $sessionId, $userId, $memberIds] = $argv;
 
 Carbon::setTestNow($now);
+
+echo 'ready '.microtime(true)."\n";
 
 while (microtime(true) < (float) $startAt) {
     usleep(500);

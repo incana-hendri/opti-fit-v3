@@ -40,15 +40,15 @@
                 @php($state = $states[$session->id])
                 <x-session-card wire:key="session-{{ $session->id }}"
                     :time="$session->starts_at->format('H:i')" :title="$session->title" :location="$session->location->name"
-                    :duration="$session->duration_minutes" :places-left="$session->placesLeft()" :state="$state"
+                    :duration="$session->duration_minutes" :places-left="$session->placesLeft()" :state="$state" :action-below="$state === 'bookable' && ($balance < 1 || ! $hasPackage)"
                     :booked-members="$booked->get($session->id, collect())->pluck('member.first_name')->all()"
                     :closed-note="'Bookings close '.Cutoff::hoursFor($session).' hours before the class.'">
                     <x-slot:action>
                         @if ($state !== 'bookable')
                         @elseif (! $hasPackage)
-                            <x-button href="{{ route('membership.request') }}" variant="secondary" size="sm">Get a package</x-button>
+                            <x-button href="{{ route('membership.request') }}" variant="secondary" size="sm" class="w-full sm:w-auto">Get a package</x-button>
                         @elseif ($balance < 1)
-                            <x-button href="{{ route('membership') }}" variant="secondary" size="sm">No credits</x-button>
+                            <x-button href="{{ route('membership') }}" variant="secondary" size="sm" class="w-full sm:w-auto">No credits</x-button>
                         @else
                             <x-button size="sm" wire:click="openBook({{ $session->id }})">Book</x-button>
                         @endif

@@ -189,3 +189,8 @@ it('avoids a query per card (docs/04 performance)', function () {
 
     expect($queries)->toBeLessThan(15);
 });
+
+it('puts the link button under the details of a card when there is no package (docs/04)', function () {
+    Livewire::actingAs(customer())->test(BookPage::class)->assertSeeHtml('flex-wrap sm:flex-nowrap');
+    Livewire::actingAs($this->user)->test(BookPage::class)->assertDontSeeHtml('flex-wrap sm:flex-nowrap');
+});

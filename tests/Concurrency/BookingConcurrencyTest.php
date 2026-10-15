@@ -11,12 +11,9 @@ use Symfony\Component\Process\Process;
 // BR-7.6: two real PHP processes book at the same moment against committed data. Exactly one may succeed.
 // This file uses DatabaseTruncation (see tests/Pest.php), because a rolled-back test transaction is invisible to other processes.
 
-afterEach(function () {
-    $this->truncateTablesForAllConnections();
-});
-
 /**
- * Runs one worker per [user, session, member ids] at the same instant and returns what each printed.
+ * Runs one worker per [user, session, member ids] at the same instant and returns what each decided. It fails loudly if a
+ * worker reached the barrier after the start time, because then the bookings ran one after the other and prove nothing.
  *
  * @param  list<array{User, int, list<int>}>  $attempts
  * @return list<string>
@@ -41,10 +38,14 @@ function bookTogether(array $attempts): array
         return $process;
     }, $attempts);
 
-    return array_map(function (Process $process) {
+    return array_map(function (Process $process) use ($startAt) {
         $process->wait();
+        [$ready, $result] = array_pad(explode("\n", trim($process->getOutput().$process->getErrorOutput()), 2), 2, '');
 
-        return $process->getOutput().$process->getErrorOutput();
+        expect($ready)->toStartWith('ready ', "A worker didn't start: {$result}");
+        expect((float) substr($ready, 6))->toBeLessThan($startAt, 'A worker reached the barrier too late, so the bookings were not simultaneous.');
+
+        return $result;
     }, $processes);
 }
 
