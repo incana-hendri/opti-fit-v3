@@ -6,6 +6,7 @@ use App\Models\Household;
 use App\Models\Membership;
 use App\Models\Package;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,6 +14,11 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+// The concurrency tests need data that other PHP processes can see, so they truncate instead of rolling back.
+pest()->extend(TestCase::class)
+    ->use(DatabaseTruncation::class)
+    ->in('Concurrency');
 
 /**
  * A verified customer whose household has finished onboarding (one member, emergency contact).
