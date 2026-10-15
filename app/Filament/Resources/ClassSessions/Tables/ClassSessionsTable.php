@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClassSessions\Tables;
 
 use App\Enums\SessionStatus;
 use App\Filament\Resources\ClassSessions\Actions\SessionActions;
+use App\Filament\Resources\ClassSessions\Pages\ListClassSessions;
 use App\Models\ClassSession;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
@@ -73,11 +74,15 @@ class ClassSessionsTable
     }
 
     /**
+     * Today to two weeks ahead for Upcoming; none for Past, where it would hide every class.
+     *
      * @return array{from: string|null, until: string|null}
      */
-    public static function defaultDateRange(): array
+    public static function defaultDateRange(?string $tab = null): array
     {
-        return ['from' => today()->toDateString(), 'until' => today()->addDays(self::DEFAULT_RANGE_DAYS)->toDateString()];
+        return $tab === 'past'
+            ? ['from' => null, 'until' => null]
+            : ['from' => today()->toDateString(), 'until' => today()->addDays(self::DEFAULT_RANGE_DAYS)->toDateString()];
     }
 
     private static function dateFilter(): Filter
@@ -85,8 +90,8 @@ class ClassSessionsTable
         return Filter::make('date')
             ->label('Dates')
             ->schema([
-                DatePicker::make('from')->default(fn () => self::defaultDateRange()['from']),
-                DatePicker::make('until')->default(fn () => self::defaultDateRange()['until']),
+                DatePicker::make('from')->default(fn (ListClassSessions $livewire) => self::defaultDateRange($livewire->activeTab)['from']),
+                DatePicker::make('until')->default(fn (ListClassSessions $livewire) => self::defaultDateRange($livewire->activeTab)['until']),
             ])
             ->columns(2)
             ->query(fn (Builder $query, array $data) => $query

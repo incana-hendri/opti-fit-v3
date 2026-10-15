@@ -19,6 +19,7 @@ use App\Models\Location;
 use App\Models\ScheduleTemplate;
 use App\Support\CreditLedger;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
@@ -198,4 +199,53 @@ it('keeps a location in use out of the archive (BR-9.2)', function () {
     $location = Location::query()->sole();
 
     expect(fn () => $location->archive())->toThrow(SessionException::class, 'still used');
+});
+
+// --- Verifier fixes ---
+
+it('skips a date the template already has a session on even after the template time changed (BR-8.2)', function () {
+    ScheduleTemplate::query()->delete();
+    $template = ScheduleTemplate::factory()->on(1, '05:00:00')->create();
+    $generate = fn () => app(GenerateSessions::class)->handle(collect([$template->fresh()]), Carbon::parse('2026-10-16'), Carbon::parse('2026-11-01'));
+
+    expect($generate())->toBe(['created' => 2, 'skipped' => 0]);
+
+    $template->update(['start_time' => '06:00:00']);
+
+    expect($generate())->toBe(['created' => 0, 'skipped' => 2])
+        ->and(ClassSession::query()->count())->toBe(2);
+});
+
+it('refuses to move a session onto a time the same template already uses (BR-8.2)', function () {
+    ScheduleTemplate::query()->delete();
+    $template = ScheduleTemplate::factory()->on(1, '05:00:00')->create();
+    app(GenerateSessions::class)->handle(collect([$template]), Carbon::parse('2026-10-19'), Carbon::parse('2026-10-26'));
+    [$first, $second] = ClassSession::query()->orderBy('starts_at')->get()->all();
+
+    expect(fn () => app(RescheduleSession::class)->handle($second, ['starts_at' => $first->starts_at], $this->admin))
+        ->toThrow(SessionException::class, 'same template');
+    expect($second->fresh()->starts_at->format('Y-m-d H:i'))->toBe('2026-10-26 05:00');
+});
+
+it('does not cancel when a household books in the gap after the household list was read (BR-7.6, 7.8)', function () {
+    $session = bookedSession($this, 1);
+    $other = bookingCustomer();
+    $injected = false;
+
+    DB::listen(function ($query) use (&$injected, $session, $other) {
+        if ($injected || ! str_contains($query->sql, 'distinct `household_id`')) {
+            return;
+        }
+        $injected = true;
+        Booking::factory()->for($session, 'classSession')->create(['member_id' => $other->household->members->first()->id]);
+    });
+
+    expect(fn () => app(CancelSession::class)->handle($session, 'Storm', $this->admin))
+        ->toThrow(SessionException::class, 'try again');
+
+    expect($injected)->toBeTrue()
+        ->and($session->fresh()->status)->toBe(SessionStatus::Scheduled)
+        ->and(Booking::query()->where('status', BookingStatus::Booked)->count())->toBe(2)
+        ->and(CreditEntry::query()->where('type', CreditEntryType::Refund)->count())->toBe(0);
+    Mail::assertNothingQueued();
 });

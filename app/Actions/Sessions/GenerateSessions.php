@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-// BR-8.2: one session per matching weekday, skipping dates where the template already has one.
+// BR-8.2: one session per matching weekday, skipping dates where the template already has one (whatever its time).
 class GenerateSessions
 {
     /**
@@ -22,13 +22,14 @@ class GenerateSessions
 
         DB::transaction(function () use ($templates, $from, $to, &$counts) {
             foreach ($templates as $template) {
+                // By date, not exact time: a template whose time changed must not get a second class on the same day.
                 $existing = $template->classSessions()
                     ->whereBetween('starts_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
                     ->pluck('starts_at')
-                    ->map(fn (Carbon $startsAt) => $startsAt->format('Y-m-d H:i:s'));
+                    ->map(fn (Carbon $startsAt) => $startsAt->toDateString());
 
                 foreach ($this->startsAt($template, $from, $to) as $startsAt) {
-                    if ($existing->contains($startsAt->format('Y-m-d H:i:s'))) {
+                    if ($existing->contains($startsAt->toDateString())) {
                         $counts['skipped']++;
 
                         continue;

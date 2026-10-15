@@ -3,6 +3,7 @@
 namespace App\Actions\Sessions;
 
 use App\Enums\BookingStatus;
+use App\Exceptions\SessionException;
 use App\Mail\SessionTimeChanged;
 use App\Models\Booking;
 use App\Models\ClassSession;
@@ -26,6 +27,7 @@ class RescheduleSession
             // Booking locks the session row, so a capacity change can't slip in half-way through a booking (BR-7.6).
             $session = ClassSession::whereKey($session->id)->lockForUpdate()->firstOrFail();
             $before = $session->starts_at->copy();
+            $this->assertSlotFree($session, $attributes);
             $session->update($attributes);
 
             return [$session, $before];
@@ -43,5 +45,26 @@ class RescheduleSession
         }
 
         return $householdIds->count();
+    }
+
+    // BR-8.2: a template can't have two classes at the same start (unique index), so say so instead of failing on it.
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    private function assertSlotFree(ClassSession $session, array $attributes): void
+    {
+        if ($session->schedule_template_id === null || ! isset($attributes['starts_at'])) {
+            return;
+        }
+
+        $taken = ClassSession::query()
+            ->where('schedule_template_id', $session->schedule_template_id)
+            ->where('starts_at', Carbon::parse($attributes['starts_at']))
+            ->whereKeyNot($session->id)
+            ->exists();
+
+        if ($taken) {
+            throw new SessionException('Another class from the same template already starts at that time.');
+        }
     }
 }

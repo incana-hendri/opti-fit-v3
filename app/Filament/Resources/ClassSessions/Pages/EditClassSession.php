@@ -4,11 +4,13 @@ namespace App\Filament\Resources\ClassSessions\Pages;
 
 use App\Actions\Sessions\RescheduleSession;
 use App\Enums\BookingStatus;
+use App\Exceptions\SessionException;
 use App\Filament\Resources\ClassSessions\ClassSessionResource;
 use App\Models\Booking;
 use App\Models\ClassSession;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -55,7 +57,12 @@ class EditClassSession extends EditRecord
         /** @var User $admin */
         $admin = Auth::user();
         /** @var ClassSession $record */
-        app(RescheduleSession::class)->handle($record, $data, $admin);
+        try {
+            app(RescheduleSession::class)->handle($record, $data, $admin);
+        } catch (SessionException $exception) {
+            Notification::make()->title($exception->getMessage())->danger()->send();
+            $this->halt();
+        }
 
         return $record->refresh();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ClassSessions\Schemas;
 
+use App\Models\ClassSession;
 use App\Models\Location;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -23,7 +24,8 @@ class ClassSessionForm
                         TextInput::make('title')->required()->maxLength(255),
                         Select::make('location_id')
                             ->label('Venue')
-                            ->options(fn () => Location::query()->where('is_active', true)->orderBy('name')->pluck('name', 'id'))
+                            // An archived venue stays selectable on a session that already uses it.
+                            ->options(fn (?ClassSession $record) => Location::query()->where('is_active', true)->when($record, fn ($query) => $query->orWhere('id', $record->location_id))->orderBy('name')->pluck('name', 'id'))
                             ->required(),
                         DateTimePicker::make('starts_at')->label('Starts')->seconds(false)->required(),
                         TextInput::make('duration_minutes')->label('Minutes')->numeric()->integer()->default(45)->required()->minValue(5)->maxValue(240),

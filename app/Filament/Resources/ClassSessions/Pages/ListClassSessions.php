@@ -35,13 +35,11 @@ class ListClassSessions extends ListRecords
         ];
     }
 
-    // The default date range (today and the next 14 days) would hide every past class, so the Past tab starts without one.
+    // The default date range would hide every past class, so the Past tab has none: here when switching, and in the filter defaults when opened by URL.
     public function updatedActiveTab(): void
     {
         parent::updatedActiveTab();
 
-        $this->tableFilters['date'] = $this->activeTab === 'past'
-            ? ['from' => null, 'until' => null]
-            : ClassSessionsTable::defaultDateRange();
+        $this->tableFilters['date'] = ClassSessionsTable::defaultDateRange($this->activeTab);
     }
 }

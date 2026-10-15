@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Bookings\BookSession;
+use App\Actions\Sessions\GenerateSessions;
 use App\Enums\BookingStatus;
 use App\Enums\SessionStatus;
 use App\Filament\Resources\ClassSessions\Pages\CreateClassSession;
@@ -429,4 +430,42 @@ it('shows the Bookings tab on the household page', function () {
     $user = bookingCustomer();
 
     $this->get("/admin/households/{$user->household->id}")->assertOk();
+});
+
+// --- Verifier fixes ---
+
+it('opens on the Past tab with no date filter when the URL says so', function () {
+    $yesterday = classSession(['starts_at' => '2026-10-15 05:00']);
+    $soon = classSession(['starts_at' => '2026-10-17 05:00']);
+
+    Livewire::withQueryParams(['tab' => 'past'])->test(ListClassSessions::class)
+        ->assertCanSeeTableRecords([$yesterday])
+        ->assertCanNotSeeTableRecords([$soon]);
+});
+
+it('refuses to move a session onto a slot of the same template with a clear message (BR-8.2)', function () {
+    ScheduleTemplate::query()->delete();
+    $template = ScheduleTemplate::factory()->on(1, '05:00:00')->create();
+    app(GenerateSessions::class)->handle(collect([$template]), Carbon::parse('2026-10-19'), Carbon::parse('2026-10-26'));
+    [$first, $second] = ClassSession::query()->orderBy('starts_at')->get()->all();
+
+    Livewire::test(EditClassSession::class, ['record' => $second->id])
+        ->fillForm(['starts_at' => $first->starts_at->format('Y-m-d H:i:s')])
+        ->call('save')
+        ->callMountedAction()
+        ->assertNotified('Another class from the same template already starts at that time.');
+
+    expect($second->fresh()->starts_at->format('Y-m-d H:i'))->toBe('2026-10-26 05:00');
+});
+
+it('still lets a session whose venue was archived be edited (docs/05)', function () {
+    $location = Location::factory()->inactive()->create();
+    $session = classSession(['starts_at' => '2026-10-19 05:00', 'location_id' => $location->id]);
+
+    Livewire::test(EditClassSession::class, ['record' => $session->id])
+        ->fillForm(['capacity' => 12])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($session->fresh()->capacity)->toBe(12)->and($session->fresh()->location_id)->toBe($location->id);
 });
