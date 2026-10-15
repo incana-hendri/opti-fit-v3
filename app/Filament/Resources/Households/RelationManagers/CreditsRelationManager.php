@@ -19,6 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 // The Credits tab (docs/05 § Households): the current balance, the whole ledger, and "Adjust credits" (BR-6.5).
@@ -40,6 +41,7 @@ class CreditsRelationManager extends RelationManager
         $household = $this->getOwnerRecord();
 
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('creator'))
             ->heading(fn () => 'Balance for '.Period::label(Period::current()).': '.CreditLedger::balance($household))
             ->description('Every credit change is a new row. Entries are never edited or deleted.')
             ->defaultSort('id', 'desc')

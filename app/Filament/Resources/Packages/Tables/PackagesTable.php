@@ -63,7 +63,7 @@ class PackagesTable
                         ->action(fn (Package $record) => $record->update(['is_active' => true])),
                     // BR-3.4: only a package that no membership ever used can be deleted.
                     DeleteAction::make()
-                        ->visible(fn (Package $record) => $record->isDeletable()),
+                        ->visible(fn (Package $record) => $record->memberships_count === 0),
                 ]),
             ]);
     }
