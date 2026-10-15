@@ -9,26 +9,26 @@
     @if ($hasCredits)
         <x-credit-meter :balance="$balance" :granted="$granted" :used="$used" :month="$month" :expires="$expires" />
     @elseif ($scheduled)
-        <x-card class="relative overflow-hidden">
-            <div aria-hidden="true" class="pointer-events-none absolute -top-16 -right-16 size-48 rounded-full bg-brand/10 blur-2xl"></div>
-            <p class="relative text-lg font-semibold">Your package starts on 1 {{ Period::label($scheduled->starts_period) }}</p>
-            <p class="relative mt-1 text-muted">{{ $scheduled->package->name }} is approved. Your credits arrive on the 1st.</p>
-            <x-button href="{{ route('membership') }}" variant="secondary" class="relative mt-5">View my membership</x-button>
-        </x-card>
+        <x-status-card :title="'Your package starts on 1 '.Period::label($scheduled->starts_period)">
+            {{ $scheduled->package->name }} is approved. Your credits arrive on the 1st.
+            <x-slot:action>
+                <x-button href="{{ route('membership') }}" variant="secondary">View my membership</x-button>
+            </x-slot:action>
+        </x-status-card>
     @elseif ($pending)
-        <x-card class="relative overflow-hidden">
-            <div aria-hidden="true" class="pointer-events-none absolute -top-16 -right-16 size-48 rounded-full bg-brand/10 blur-2xl"></div>
-            <p class="relative text-lg font-semibold">Request pending</p>
-            <p class="relative mt-1 text-muted">We'll email you once your {{ $pending->package->name }} package is approved.</p>
-            <x-button href="{{ route('membership') }}" variant="secondary" class="relative mt-5">View my request</x-button>
-        </x-card>
+        <x-status-card title="Request pending">
+            We'll email you once your {{ $pending->package->name }} package is approved.
+            <x-slot:action>
+                <x-button href="{{ route('membership') }}" variant="secondary">View my request</x-button>
+            </x-slot:action>
+        </x-status-card>
     @else
-        <x-card class="relative overflow-hidden">
-            <div aria-hidden="true" class="pointer-events-none absolute -top-16 -right-16 size-48 rounded-full bg-brand/10 blur-2xl"></div>
-            <p class="relative text-lg font-semibold">No package yet</p>
-            <p class="relative mt-1 text-muted">Choose a monthly package and we'll get your family booked in.</p>
-            <x-button href="{{ route('membership.request') }}" class="relative mt-5">Choose a package</x-button>
-        </x-card>
+        <x-status-card title="No package yet">
+            Choose a monthly package and we'll get your family booked in.
+            <x-slot:action>
+                <x-button href="{{ route('membership.request') }}">Choose a package</x-button>
+            </x-slot:action>
+        </x-status-card>
     @endif
 
     @if ($ending)

@@ -85,6 +85,16 @@
         </section>
 
         <section class="space-y-4">
+            <h2 class="text-xl">x-status-card</h2>
+            <x-status-card title="No package yet">
+                Choose a monthly package and we'll get your family booked in.
+                <x-slot:action>
+                    <x-button>Choose a package</x-button>
+                </x-slot:action>
+            </x-status-card>
+        </section>
+
+        <section class="space-y-4">
             <h2 class="text-xl">x-day-strip</h2>
             <x-day-strip :selected="$days[1]['date']" :days="$days" />
         </section>

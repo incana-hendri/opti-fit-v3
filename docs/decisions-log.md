@@ -51,6 +51,7 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · Row actions on the admin Packages and Memberships tables sit in one menu per row · separate buttons ran off the edge at 390px and the owner approves requests from a phone (docs/05)
 - 2026-10-15 · `DemoSeeder` dates last month's ledger rows last month (it fakes the clock while writing them) · the history on `/membership` and the Credits tab then reads like real data
 - 2026-10-15 · A request is refused up front while a package change is already scheduled, and the request form says "Your package already changes on 1 {Month}" · approval always refuses it (BR-4.1), so the customer would otherwise wait for nothing
+- 2026-10-15 · New `x-status-card` component (title, text, optional action) for Home's "no package", "request pending" and "package starts" cards, listed in docs/08 and `/_styleguide` · the card was repeated three times (AGENTS.md: a pattern needed twice becomes a component)
 
 ## Ideas (out of scope for now)
 

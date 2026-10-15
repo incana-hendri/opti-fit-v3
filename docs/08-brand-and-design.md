@@ -70,6 +70,6 @@ Set `<meta name="color-scheme" content="dark">` and `theme-color` `#0D0918`.
 ## Components to build (Blade, in `resources/views/components/`)
 
 `x-button` (primary/secondary/ghost/danger, sizes) · `x-card` · `x-badge` · `x-input`, `x-select`, `x-checkbox`, `x-radio-card` ·
-`x-sheet` (bottom sheet/modal) · `x-toast` · `x-empty-state` · `x-credit-meter` · `x-session-card` · `x-day-strip` ·
+`x-sheet` (bottom sheet/modal) · `x-toast` · `x-empty-state` · `x-credit-meter` · `x-status-card` · `x-session-card` · `x-day-strip` ·
 `x-member-chip` · `x-tab-bar` · `x-page-header`. Build a hidden local-only `/_styleguide` route that renders them
 all, for visual QA (disabled in production).
