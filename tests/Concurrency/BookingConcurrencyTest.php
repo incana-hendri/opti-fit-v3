@@ -20,7 +20,7 @@ use Symfony\Component\Process\Process;
  */
 function bookTogether(array $attempts): array
 {
-    $startAt = microtime(true) + 3;
+    $startAt = microtime(true) + 5;
     $environment = collect(['APP_ENV', 'CACHE_STORE', 'DB_DATABASE', 'DB_URL', 'MAIL_MAILER', 'QUEUE_CONNECTION', 'SESSION_DRIVER'])
         ->mapWithKeys(fn (string $name) => [$name => getenv($name)])
         ->filter(fn ($value) => $value !== false)
