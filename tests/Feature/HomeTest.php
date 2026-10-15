@@ -45,7 +45,7 @@ it('shows the balance, month and expiry date once credits arrive (BR-5.8)', func
         ->assertViewHas('used', 0);
 });
 
-it('works out used credits from bookings less refunds, and counts positive adjustments as granted', function () {
+it('keeps balance = granted - used by counting every positive entry as granted and every negative one as used (BR-5.8)', function () {
     $user = customer();
     $household = $user->household;
     activeMembership($user, '2026-10');
@@ -54,11 +54,23 @@ it('works out used credits from bookings less refunds, and counts positive adjus
     CreditEntry::factory()->for($household)->ofType(CreditEntryType::Adjustment, -1)->create();
     CreditEntry::factory()->for($household)->ofType(CreditEntryType::Booking, -3)->create();
     CreditEntry::factory()->for($household)->ofType(CreditEntryType::Refund, 1)->create();
+    CreditEntry::factory()->for($household)->forPeriod('2026-09')->create(['amount' => 20]);
 
     Livewire::actingAs($user)->test(Home::class)
         ->assertViewHas('balance', 7)
-        ->assertViewHas('granted', 10)
-        ->assertViewHas('used', 2);
+        ->assertViewHas('granted', 11)
+        ->assertViewHas('used', 4);
+});
+
+it('shows a correct meter for a household with a negative adjustment (BR-5.8)', function () {
+    $user = customer();
+    activeMembership($user, '2026-10');
+    CreditEntry::factory()->for($user->household)->create(['amount' => 24]);
+    CreditEntry::factory()->for($user->household)->ofType(CreditEntryType::Adjustment, -1)->create();
+
+    Livewire::actingAs($user)->test(Home::class)
+        ->assertSee('23')
+        ->assertSee('1 of 24 used this month');
 });
 
 it('shows the credit card for a household that still has credits but no membership (BR-5.8)', function () {

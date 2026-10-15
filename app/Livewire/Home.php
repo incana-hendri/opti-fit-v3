@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Actions\Memberships\UndoMembershipCancellation;
-use App\Enums\CreditEntryType;
 use App\Exceptions\MembershipException;
 use App\Models\Household;
 use App\Models\User;
@@ -50,25 +49,15 @@ class Home extends Component
         ])->title('Home');
     }
 
-    // Credits that came in this month: grants and positive adjustments.
+    // Every positive entry this month is credit that came in, and every negative one credit that went out, so balance = granted - used.
     private function granted(Household $household, string $period): int
     {
-        return (int) $household->creditEntries()
-            ->where('period', $period)
-            ->whereIn('type', [CreditEntryType::Grant, CreditEntryType::Adjustment])
-            ->where('amount', '>', 0)
-            ->sum('amount');
+        return (int) $household->creditEntries()->where('period', $period)->where('amount', '>', 0)->sum('amount');
     }
 
-    // Bookings less refunds. Bookings arrive in Milestone 3, so this is 0 until then.
     private function used(Household $household, string $period): int
     {
-        $net = (int) $household->creditEntries()
-            ->where('period', $period)
-            ->whereIn('type', [CreditEntryType::Booking, CreditEntryType::Refund])
-            ->sum('amount');
-
-        return max(0, -$net);
+        return -(int) $household->creditEntries()->where('period', $period)->where('amount', '<', 0)->sum('amount');
     }
 
     private function user(): User
