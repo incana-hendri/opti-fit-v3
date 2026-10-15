@@ -71,5 +71,5 @@ Set `<meta name="color-scheme" content="dark">` and `theme-color` `#0D0918`.
 
 `x-button` (primary/secondary/ghost/danger, sizes) · `x-card` · `x-badge` · `x-input`, `x-select`, `x-checkbox`, `x-radio-card` ·
 `x-sheet` (bottom sheet/modal) · `x-toast` · `x-empty-state` · `x-credit-meter` · `x-status-card` · `x-session-card` · `x-places-badge` · `x-timetable-list` · `x-day-strip` ·
-`x-member-chip` · `x-tab-bar` · `x-page-header`. Build a hidden local-only `/_styleguide` route that renders them
+`x-member-chip` · `x-tab-bar` · `x-page-header` · `x-error-page` (the 403/404/419/500/503 pages; it reads no database). Build a hidden local-only `/_styleguide` route that renders them
 all, for visual QA (disabled in production).
