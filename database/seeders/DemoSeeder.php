@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Support\CreditLedger;
 use App\Support\Period;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -61,11 +62,20 @@ class DemoSeeder extends Seeder
             ['Johan', 'Smith', '1984-11-30', Gender::Male, false],
         ]);
 
-        $membership = $this->membership($household, '2× per week', ['Anna', 'Mia', 'Liam'], Period::previous());
-        $this->grant($household, $membership, Period::previous());
-        CreditLedger::write($household, Period::previous(), CreditEntryType::Adjustment, -3, 'Adjustment: Used at a school event');
-        CreditLedger::write($household, Period::previous(), CreditEntryType::Expiry, -(24 - 3), 'Unused '.Period::label(Period::previous()).' credits expired', key: "expiry:{$household->id}:".Period::previous());
-        $this->grant($household, $membership, Period::current());
+        $previous = Period::previous();
+        $current = Period::current();
+        $membership = $this->membership($household, '2× per week', ['Anna', 'Mia', 'Liam'], $previous);
+
+        // Last month's rows are dated last month and its expiry the morning after, as the monthly job would have written them.
+        Carbon::setTestNow(Period::firstDay($previous)->setTime(0, 5));
+        $this->grant($household, $membership, $previous);
+        Carbon::setTestNow(Period::firstDay($previous)->addDays(9)->setTime(18, 30));
+        CreditLedger::write($household, $previous, CreditEntryType::Adjustment, -3, 'Adjustment: Used at a school event');
+        Carbon::setTestNow(Period::firstDay($current)->setTime(0, 5));
+        CreditLedger::write($household, $previous, CreditEntryType::Expiry, -(24 - 3), 'Unused '.Period::label($previous).' credits expired', key: "expiry:{$household->id}:{$previous}");
+        $this->grant($household, $membership, $current);
+        Carbon::setTestNow();
+
         CreditLedger::write($household, Period::current(), CreditEntryType::Adjustment, 2, 'Adjustment: Make-up for a cancelled class');
         CreditLedger::write($household, Period::current(), CreditEntryType::Adjustment, -1, 'Adjustment: Correction');
     }
