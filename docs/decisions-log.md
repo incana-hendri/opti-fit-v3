@@ -77,6 +77,10 @@ from it. Format: `YYYY-MM-DD · decision · reason`. Keep it short.
 - 2026-10-15 · C12 says "The free-cancellation time for this class has already passed" instead of promising free cancellation when the new cutoff is in the past, as C8 does
 - 2026-10-15 · The session form keeps an archived venue selectable on a session that already uses it · editing such a session failed validation
 - 2026-10-15 · Guest entries are added and removed as plain Filament writes without the session lock; accepted · a guest only lowers the places left, an admin does it by hand at the venue, and at 30 families a collision with a booking in the same instant is not worth another locked code path (BR-9.3)
+- 2026-10-15 · `/privacy` and `/terms` are Markdown files rendered by one thin `LegalController` with `Str::markdown()` (HTML stripped, so the amendment comment never shows; line breaks kept) and styled by a hand-written `prose-legal` utility in `resources/css/app.css` · docs/legal/README.md; no typography plugin or Markdown package needed
+- 2026-10-15 · The legal pages say "November 2026" as the effective and last-updated date (the month of the `terms_version` seed `2026-11`); the owner confirms the launch month before launch · the README asks for the launch month, which isn't known yet
+- 2026-10-15 · The amended legal text is static: "8 hours" in the booking and cancellation sentences does not follow the `default_cutoff_hours` setting · the README gives the exact wording, and the pages say "unless shown otherwise"
+- 2026-10-15 · Beyond the listed amendments, only print artefacts and page chrome were removed (headers, footers, page numbers, "Back to Home", "Cookie Settings", the warning emoji); the analytics and cookie wording is the one the README's privacy amendment 1 asks for. The wording about invoices (terms 4.2) and payment processors and payment information (privacy 2.1, 5.1) is the studio's published text and was left alone; the owner may want to review it since the app takes no online payments
 
 ## Ideas (out of scope for now)
 

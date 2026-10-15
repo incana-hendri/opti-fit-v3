@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\RequestAccountDeletionController;
 use App\Http\Controllers\TimetableController;
@@ -22,6 +23,8 @@ use Illuminate\Support\ViewErrorBag;
 Route::get('/', LandingController::class)->name('landing');
 Route::get('/pricing', PricingController::class)->name('pricing');
 Route::get('/timetable', TimetableController::class)->name('timetable');
+Route::get('/privacy', [LegalController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [LegalController::class, 'terms'])->name('terms');
 
 // Signed-in customers (docs/04). Auth pages themselves are registered by Fortify.
 Route::middleware(['auth', 'verified', 'customer'])->group(function () {

@@ -17,8 +17,8 @@
 
         <div class="space-y-1 pt-1">
             <x-checkbox name="terms" value="1" :checked="old('terms')" required>
-                I accept the <a href="{{ url('/terms') }}" target="_blank" rel="noopener" class="text-brand underline hover:text-brand-light">Terms</a>
-                and <a href="{{ url('/privacy') }}" target="_blank" rel="noopener" class="text-brand underline hover:text-brand-light">Privacy Policy</a>
+                I accept the <a href="{{ route('terms') }}" target="_blank" rel="noopener" class="text-brand underline hover:text-brand-light">Terms</a>
+                and <a href="{{ route('privacy') }}" target="_blank" rel="noopener" class="text-brand underline hover:text-brand-light">Privacy Policy</a>
             </x-checkbox>
             <x-checkbox name="marketing_opt_in" value="1" :checked="old('marketing_opt_in')" label="Send me news and offers from OptiFit (optional)" />
         </div>

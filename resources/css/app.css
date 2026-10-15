@@ -56,6 +56,17 @@
     background-image: radial-gradient(ellipse at center, color-mix(in srgb, var(--of-orange) 20%, transparent), transparent 60%);
 }
 
+/* Long-form text for /privacy and /terms, rendered from Markdown (docs/04). */
+@utility prose-legal {
+    & h1 { @apply mb-6 text-2xl lg:text-3xl; }
+    & h2 { @apply mt-10 mb-3 text-xl; }
+    & h3 { @apply mt-6 mb-2 text-lg; }
+    & p { @apply mb-4 text-muted; }
+    & strong { @apply font-semibold text-white; }
+    & ul { @apply mb-4 list-disc space-y-1 pl-6 text-muted marker:text-brand; }
+    & a { @apply text-brand underline underline-offset-2 hover:text-brand-light; }
+}
+
 @layer base {
     html {
         color-scheme: dark;
