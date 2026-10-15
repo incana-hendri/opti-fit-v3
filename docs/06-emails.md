@@ -19,7 +19,7 @@ Subjects are short and specific. Times are shown as `Mon 3 Nov, 05:00`.
 | C5 | Declined (BR-4.6) | About your package request | Reason, contact email |
 | C6 | Change approved (BR-4.7) | Your package changes on 1 {Month} | Old → new, effective date |
 | C7 | Monthly grant (BR-5.5) | Your {Month} credits are ready | Credits granted, expire on {last day}, "Book now" button |
-| C8 | Booking made (by customer or admin) | Booked: {Title}, {Mon 3 Nov, 05:00} | Members booked, location, free-cancellation-until time, credits left |
+| C8 | Booking made (by customer or admin; not for a class that has already started) | Booked: {Title}, {Mon 3 Nov, 05:00} | Members booked, location, free-cancellation-until time, credits left |
 | C9 | Booking cancelled by customer | Cancelled: {Title}, {date time} | Members, whether the credit was returned (BR-7.7) |
 | C10 | Booking cancelled by admin | Your booking was cancelled | Member, session, credit returned yes/no |
 | C11 | Session cancelled (BR-7.8) | Class cancelled: {Title}, {date time} | Reason if given, credits returned, "Book another class" button |
@@ -34,6 +34,6 @@ Subjects are short and specific. Times are shown as `Mon 3 Nov, 05:00`.
 | A2 | Membership request or change request | Package request: {household} – {package} |
 | A3 | Customer cancelled membership | Membership ending: {household} |
 | A4 | Account deletion requested | Deletion request: {household} |
-| A5 | Daily 06:00, only if any of today's sessions are below their minimum | Classes below minimum today |
+| A5 | Daily 06:00, only if any of today's sessions that haven't started yet are below their minimum | Classes below minimum today |
 
 No other emails. No marketing emails are sent by the app (the opt-in is only recorded).

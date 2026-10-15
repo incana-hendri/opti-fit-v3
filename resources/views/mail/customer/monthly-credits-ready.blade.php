@@ -5,7 +5,7 @@ Hi {{ $membership->household->user->first_name }}, **{{ $membership->monthly_cre
 
 They expire on **{{ \App\Support\Period::lastDay($period)->format('D j M') }}**, so book early.
 
-<x-mail::button :url="route('home')">
+<x-mail::button :url="route('book')">
 Book now
 </x-mail::button>
 </x-mail::message>

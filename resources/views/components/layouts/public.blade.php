@@ -36,7 +36,9 @@
             </div>
             <div class="space-y-1">
                 <p class="font-semibold text-white">Venue</p>
-                <p>Gene Louw Activity Centre<br>Tulip Street, Amanda Glen, Durbanville</p>
+                @if ($venue)
+                    <p>{{ $venue->name }}<br>{{ $venue->address }}</p>
+                @endif
             </div>
             <div class="space-y-1 sm:text-right">
                 <p class="space-x-4">

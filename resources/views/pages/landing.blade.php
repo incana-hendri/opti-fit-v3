@@ -1,4 +1,4 @@
-{{-- Placeholder hero. The full landing page is built in Milestone 4 (docs/04 § Landing). --}}
+{{-- Hero and this week's timetable. The rest of the landing page is built in Milestone 4 (docs/04 § Landing). --}}
 <x-layouts.public>
     <section class="relative overflow-hidden">
         <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-24 h-112 bg-brand-glow"></div>
@@ -18,5 +18,13 @@
                 <x-button href="{{ url('/timetable') }}" variant="secondary" size="lg" block class="sm:w-auto">See timetable</x-button>
             </div>
         </div>
+    </section>
+
+    <section aria-labelledby="week-heading" class="mx-auto max-w-3xl px-4 lg:px-6">
+        <div class="mb-4 flex items-end justify-between gap-4">
+            <h2 id="week-heading" class="text-2xl">This week's timetable</h2>
+            <a href="{{ url('/timetable') }}" class="inline-flex min-h-11 items-center text-sm font-medium text-brand hover:text-brand-light">Full timetable</a>
+        </div>
+        <x-timetable-list :sessions="$sessions" />
     </section>
 </x-layouts.public>

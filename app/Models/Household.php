@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\MembershipStatus;
 use App\Support\Period;
 use Database\Factories\HouseholdFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,6 +71,14 @@ class Household extends Model
     }
 
     /**
+     * @return HasMany<Booking, $this>
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    /**
      * The memberships in effect this period (BR-4.1), for eager loading in lists.
      *
      * @return HasMany<Membership, $this>
@@ -96,6 +105,22 @@ class Household extends Model
             ->where('status', MembershipStatus::Active)
             ->where('starts_period', '>', Period::current())
             ->first();
+    }
+
+    /**
+     * BR-4.10: the non-archived members covered by the membership in effect now, if it is active (a paused one covers nobody).
+     *
+     * @return Collection<int, Member>
+     */
+    public function coveredMembers(): Collection
+    {
+        $membership = $this->membershipInEffect();
+
+        if ($membership?->status !== MembershipStatus::Active) {
+            return new Collection;
+        }
+
+        return $membership->members()->whereNull('archived_at')->orderBy('members.id')->get();
     }
 
     // BR-4.1: at most one membership is requested at a time.

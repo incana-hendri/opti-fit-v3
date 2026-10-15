@@ -1,4 +1,4 @@
-{{-- Home (docs/04 § /home). The next bookings and the Book button arrive in Milestone 3. --}}
+{{-- Home (docs/04 § /home). --}}
 @php
     use App\Support\Period;
 @endphp
@@ -48,6 +48,32 @@
             <p class="font-medium">Request pending: we'll email you once approved.</p>
             <x-button href="{{ route('membership') }}" variant="ghost" size="sm">View</x-button>
         </x-card>
+    @endif
+
+    <section aria-labelledby="next-up-heading" class="space-y-3">
+        <h2 id="next-up-heading" class="text-xl">Next up</h2>
+        @forelse ($nextUp as $session)
+            <a href="{{ route('bookings') }}" wire:key="next-{{ $session->id }}"
+               class="block rounded-card border border-line bg-surface p-4 transition-colors duration-150 hover:bg-raised sm:p-5">
+                <p class="text-sm text-muted">{{ $session->starts_at->format('l j M') }}</p>
+                <p class="mt-0.5 text-lg font-semibold"><span class="tabular-nums">{{ $session->starts_at->format('H:i') }}</span> · {{ $session->title }}</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                    @foreach ($session->bookings as $booking)
+                        <x-member-chip :name="$booking->member->first_name" booked />
+                    @endforeach
+                </div>
+            </a>
+        @empty
+            <x-card class="text-muted">Nothing booked yet.</x-card>
+        @endforelse
+    </section>
+
+    <x-button href="{{ route('book') }}" size="lg" block>Book a class</x-button>
+
+    @if ($idleMembers->isNotEmpty())
+        <p class="text-center text-sm text-muted">
+            {{ $idleMembers->pluck('first_name')->join(', ', ' and ') }} {{ $idleMembers->count() === 1 ? 'has' : 'have' }} no class booked this week.
+        </p>
     @endif
 
     <x-card class="flex items-center gap-4">

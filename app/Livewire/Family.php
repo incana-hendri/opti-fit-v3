@@ -127,7 +127,7 @@ class Family extends Component
 
     public function render(): View
     {
-        $members = $this->household()->members()->withCount('memberships')->orderByDesc('is_account_holder')->oldest()->get();
+        $members = $this->household()->members()->withCount(['memberships', 'bookings'])->orderByDesc('is_account_holder')->oldest()->get();
 
         return view('livewire.family', [
             'activeMembers' => $members->reject->isArchived(),

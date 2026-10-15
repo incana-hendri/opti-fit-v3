@@ -16,8 +16,7 @@ return new class extends Migration
             $table->enum('type', ['grant', 'booking', 'refund', 'adjustment', 'expiry']);
             $table->smallInteger('amount');
             $table->foreignId('membership_id')->nullable()->constrained();
-            // The bookings table arrives in Milestone 3, which adds the foreign key.
-            $table->unsignedBigInteger('booking_id')->nullable();
+            $table->foreignId('booking_id')->nullable()->constrained();
             $table->string('description');
             $table->string('idempotency_key', 100)->nullable()->unique();
             $table->foreignId('created_by')->nullable()->constrained('users');

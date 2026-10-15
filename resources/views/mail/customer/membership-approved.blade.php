@@ -18,7 +18,7 @@ Your monthly credits start on 1 {{ \App\Support\Period::label($membership->grant
 {{ $paymentInstructions }}
 @endif
 
-<x-mail::button :url="route('home')">
+<x-mail::button :url="route('book')">
 Book your first class
 </x-mail::button>
 </x-mail::message>

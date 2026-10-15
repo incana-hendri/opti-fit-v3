@@ -106,6 +106,24 @@
             <x-session-card time="15:30" title="Afternoon Functional Fitness" location="Gene Louw Activity Centre" :places-left="0" state="full" />
             <x-session-card time="05:00" title="Morning Functional Fitness" location="Gene Louw Activity Centre" :places-left="5" state="closed" closed-note="It closed at Sun 2 Nov 21:00." />
             <x-session-card time="16:00" title="Afternoon Functional Fitness" location="Gene Louw Activity Centre" :places-left="6" state="all-booked" :booked-members="['Anna', 'Mia']" />
+            <x-session-card time="05:00" title="Morning Functional Fitness" location="Gene Louw Activity Centre" :places-left="9">
+                <x-slot:action><x-button href="#" variant="secondary" size="sm">Get a package</x-button></x-slot:action>
+            </x-session-card>
+        </section>
+
+        <section class="space-y-4">
+            <h2 class="text-xl">x-places-badge</h2>
+            <div class="flex flex-wrap gap-2">
+                <x-places-badge :places-left="12" />
+                <x-places-badge :places-left="3" />
+                <x-places-badge :places-left="1" />
+                <x-places-badge :places-left="0" />
+            </div>
+        </section>
+
+        <section class="space-y-4">
+            <h2 class="text-xl">x-timetable-list</h2>
+            <x-timetable-list :sessions="$sessions" />
         </section>
 
         <section class="space-y-4">

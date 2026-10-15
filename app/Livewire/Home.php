@@ -4,11 +4,15 @@ namespace App\Livewire;
 
 use App\Actions\Memberships\UndoMembershipCancellation;
 use App\Exceptions\MembershipException;
+use App\Models\ClassSession;
 use App\Models\Household;
+use App\Models\Member;
 use App\Models\User;
 use App\Support\CreditLedger;
 use App\Support\Period;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -17,6 +21,9 @@ use Livewire\Component;
  */
 class Home extends Component
 {
+    /** docs/04 § /home: how many upcoming bookings "Next up" shows. */
+    private const NEXT_UP = 3;
+
     public function undoCancellation(): void
     {
         try {
@@ -46,7 +53,46 @@ class Home extends Component
             'ending' => $scheduled === null && $membership?->isEnding(),
             'scheduled' => $scheduled?->load('package'),
             'pending' => $household->pendingRequest()?->load('package'),
+            'nextUp' => $this->nextUp($household),
+            'idleMembers' => $this->idleMembers($household),
         ])->title('Home');
+    }
+
+    /**
+     * The next three classes this household is booked into, each carrying only its own bookings.
+     *
+     * @return Collection<int, ClassSession>
+     */
+    private function nextUp(Household $household): Collection
+    {
+        return ClassSession::query()
+            ->where('starts_at', '>', now())
+            ->whereHas('bookings', fn ($bookings) => $bookings->bookedFor($household))
+            ->with(['bookings' => fn ($bookings) => $bookings->bookedFor($household)->with('member')->orderBy('id')])
+            ->orderBy('starts_at')
+            ->limit(self::NEXT_UP)
+            ->get();
+    }
+
+    /**
+     * docs/04 § /home: covered members with no class booked in the current week (Monday to Sunday).
+     *
+     * @return Collection<int, Member>
+     */
+    private function idleMembers(Household $household): Collection
+    {
+        $covered = $household->coveredMembers();
+
+        if ($covered->isEmpty()) {
+            return $covered;
+        }
+
+        $busy = $household->bookings()
+            ->occupying()
+            ->whereHas('classSession', fn (Builder $session) => $session->whereBetween('starts_at', [now()->startOfWeek(), now()->endOfWeek()]))
+            ->pluck('member_id');
+
+        return $covered->reject(fn (Member $member) => $busy->contains($member->id));
     }
 
     // Every positive entry this month is credit that came in, and every negative one credit that went out, so balance = granted - used.
