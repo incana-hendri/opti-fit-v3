@@ -32,13 +32,15 @@ app/
     Sessions/   GenerateSessions.php, CancelSession.php, RescheduleSession.php
     Households/ AnonymiseHousehold.php
   Console/Commands/   MakeAdmin.php, RunMonthlyCredits.php, NotifyBelowMinimum.php, ImportData.php
-  Filament/           # resources, pages, widgets (see 05)
-  Http/Controllers/   # thin; public pages, legal pages
+  Filament/           # resources, pages (Dashboard, Reports, Settings), widgets (see 05)
+  Http/Controllers/   # thin; public pages, legal pages (LegalController)
+  Http/Middleware/    # EnsureCustomer.php, SecurityHeaders.php (global)
   Livewire/           # Onboarding, Home, Family, MembershipPage, RequestForm, BookPage (with the booking sheet), BookingsPage
   Mail/               # one Mailable per row in 06
   Models/
   Policies/
-  Support/            Period.php (period helpers), Money.php (cents ↔ "R1 144" formatting), Cutoff.php
+  Support/            Period.php (period helpers), Money.php (cents ↔ "R1 144" formatting), Cutoff.php,
+                      MonthReport.php (the month's numbers, shared by the dashboard and Reports)
 resources/views/      # layouts, components (x-button, x-card, x-badge, x-sheet…), pages, mail
 resources/markdown/   # privacy.md, terms.md
 ```
@@ -78,7 +80,7 @@ The cPanel cron is a single line: `* * * * * cd ~/optifit && php artisan schedul
 - Policy tests prove customer A can't read or change customer B's members, bookings or memberships (see `09`).
 - `health_notes` use the `encrypted` cast. Don't log request bodies.
 - Admin panel: role check, plus Filament's own login throttle.
-- Security headers via a small middleware: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
+- Security headers via a small global middleware (`SecurityHeaders`, so the admin panel and error pages carry them too): `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
   `Referrer-Policy: strict-origin-when-cross-origin`. Skip CSP; it's not worth the friction for this project.
 - No analytics or third-party scripts, so no cookie banner is needed (only essential session cookies).
   The privacy policy says so.

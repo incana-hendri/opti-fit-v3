@@ -8,7 +8,7 @@ Families sign up, add their members, and request a monthly package. The studio a
 request and the family receives a monthly pool of credits. One credit books one person into one
 class. Credits expire at month end.
 
-> **Status:** Milestones 0–3 done. Next is M4, dashboard, reports and polish.
+> **Status:** Milestones 0–4 done. Next is M5, import and launch readiness.
 > Start with `AGENTS.md`, then `docs/10-milestones.md`.
 
 ## Repository map
@@ -51,6 +51,7 @@ cp .env.example .env
 - Mailpit (outgoing mail): http://localhost:8025
 - Component styleguide (not in production): http://localhost/_styleguide
 - Public timetable: http://localhost/timetable
+- Admin dashboard, reports (with a CSV of the month's sessions), settings and admins: http://localhost/admin
 - Tests: `./vendor/bin/sail composer test` (includes `tests/Concurrency`, which starts real PHP processes to prove two bookings can't take the last place) · style: `sail composer lint` · static analysis: `sail composer analyse`
 
 ## Demo data
