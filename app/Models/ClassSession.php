@@ -158,6 +158,7 @@ class ClassSession extends Model
 
     private function guestPlaces(): int
     {
-        return (int) ($this->guest_places ?? $this->guestEntries()->sum('participant_count'));
+        // withSum() gives null for no guests, which still counts as loaded.
+        return (int) (array_key_exists('guest_places', $this->attributes) ? $this->guest_places : $this->guestEntries()->sum('participant_count'));
     }
 }

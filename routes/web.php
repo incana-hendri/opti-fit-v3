@@ -1,25 +1,34 @@
 <?php
 
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\RequestAccountDeletionController;
+use App\Http\Controllers\TimetableController;
+use App\Livewire\BookingsPage;
+use App\Livewire\BookPage;
 use App\Livewire\Family;
 use App\Livewire\Home;
 use App\Livewire\MembershipPage;
 use App\Livewire\Onboarding;
 use App\Livewire\RequestForm;
+use App\Models\ClassSession;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 
-Route::view('/', 'pages.landing')->name('landing');
+Route::get('/', LandingController::class)->name('landing');
 Route::get('/pricing', PricingController::class)->name('pricing');
+Route::get('/timetable', TimetableController::class)->name('timetable');
 
 // Signed-in customers (docs/04). Auth pages themselves are registered by Fortify.
 Route::middleware(['auth', 'verified', 'customer'])->group(function () {
     Route::get('/onboarding', Onboarding::class)->name('onboarding');
     Route::get('/home', Home::class)->name('home');
+    Route::get('/book', BookPage::class)->name('book');
+    Route::get('/bookings', BookingsPage::class)->name('bookings');
     Route::get('/family', Family::class)->name('family');
     Route::get('/membership', MembershipPage::class)->name('membership');
     Route::get('/membership/request', RequestForm::class)->name('membership.request');
@@ -41,7 +50,12 @@ Route::prefix('_styleguide')->group(function () {
             'hasSessions' => today()->addDays($i)->isWeekday(),
         ])->all();
 
-        return view('styleguide.index', ['days' => $days]);
+        $venue = new Location(['name' => 'Gene Louw Activity Centre']);
+        $sessions = collect([[today()->setTime(16, 0), 6], [today()->addDay()->setTime(5, 0), 14], [today()->addDay()->setTime(16, 0), 15]])
+            ->map(fn (array $slot) => (new ClassSession(['title' => 'Functional Fitness', 'starts_at' => $slot[0], 'duration_minutes' => 45, 'capacity' => 15, 'occupying_bookings_count' => $slot[1], 'guest_places' => null]))
+                ->setRelation('location', $venue));
+
+        return view('styleguide.index', ['days' => $days, 'sessions' => $sessions]);
     });
 
     Route::get('/app', function () {

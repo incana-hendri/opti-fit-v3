@@ -1,20 +1,15 @@
 {{--
     One class session on /book (docs/04).
-    $state: bookable | closed | full | all-booked. Pass an `action` slot to replace the default button.
+    $state: bookable | closed | full | all-booked. Pass an `action` slot to replace the default button (an empty slot
+    shows no button), and `note` for a line of explanation under the details (e.g. why booking isn't possible).
     $bookedMembers: names of this household's members already booked.
 --}}
 @props([
     'time', 'title', 'location', 'duration' => 45, 'placesLeft',
-    'state' => 'bookable', 'bookedMembers' => [], 'closedNote' => 'Bookings close 8 hours before the class.',
+    'state' => 'bookable', 'bookedMembers' => [], 'closedNote' => 'Bookings close 8 hours before the class.', 'note' => null,
 ])
 
-@php
-    [$badgeColor, $badgeText] = match (true) {
-        $placesLeft <= 0 => ['neutral', 'Full'],
-        $placesLeft <= 3 => ['orange', $placesLeft.' '.\Illuminate\Support\Str::plural('place', $placesLeft).' left'],
-        default => ['success', $placesLeft.' places left'],
-    };
-@endphp
+@php($hasAction = isset($action) ? $action->isNotEmpty() : $state === 'bookable')
 
 <x-card {{ $attributes->class('flex gap-3 sm:gap-4') }}>
     <div class="shrink-0">
@@ -32,24 +27,28 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-1.5">
-            <x-badge :color="$badgeColor">{{ $badgeText }}</x-badge>
+            <x-places-badge :places-left="$placesLeft" />
             @foreach ($bookedMembers as $member)
                 <x-member-chip :name="$member" booked />
             @endforeach
         </div>
 
         {{-- "Full" is already said by the places badge. --}}
-        @if (! isset($action) && $state === 'closed')
+        @if ($note)
+            <p class="text-sm text-muted">{{ $note }}</p>
+        @endif
+
+        @if ($state === 'closed')
             <p class="text-sm">
                 <span class="font-medium text-muted">Booking closed.</span>
                 <span class="text-subtle">{{ $closedNote }}</span>
             </p>
-        @elseif (! isset($action) && $state === 'all-booked')
+        @elseif ($state === 'all-booked')
             <p class="text-sm font-medium text-success">All booked</p>
         @endif
     </div>
 
-    @if (isset($action) || $state === 'bookable')
+    @if ($hasAction)
         <div class="flex shrink-0 items-center">
             {{ $action ?? '' }}
             @unless (isset($action))

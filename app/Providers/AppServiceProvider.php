@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Location;
 use App\Models\Settings;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Event;
@@ -28,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        View::composer('components.layouts.public', fn ($view) => $view->with('settings', Settings::current()));
+        View::composer('components.layouts.public', fn ($view) => $view->with(['settings' => Settings::current(), 'venue' => Location::venue()]));
 
         // docs/06: replies to any email go to the studio's contact email.
         Event::listen(function (MessageSending $event): void {
