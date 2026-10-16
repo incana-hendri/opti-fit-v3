@@ -42,8 +42,8 @@
             </div>
             <div class="space-y-1 sm:text-right">
                 <p class="space-x-4">
-                    <a class="hover:text-white" href="{{ url('/privacy') }}">Privacy</a>
-                    <a class="hover:text-white" href="{{ url('/terms') }}">Terms</a>
+                    <a class="hover:text-white" href="{{ route('privacy') }}">Privacy</a>
+                    <a class="hover:text-white" href="{{ route('terms') }}">Terms</a>
                 </p>
                 <p class="text-subtle">&copy; {{ now()->year }} OptiFit</p>
             </div>

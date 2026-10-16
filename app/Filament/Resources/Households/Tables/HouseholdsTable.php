@@ -6,6 +6,7 @@ use App\Models\Household;
 use App\Support\Period;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -56,10 +57,18 @@ class HouseholdsTable
                     ->label('Flags')
                     ->badge()
                     ->state(fn (Household $record): array => array_values(array_filter([
-                        $record->user->deletion_requested_at ? 'Deletion requested' : null,
+                        $record->isAnonymised() ? 'Anonymised' : null,
+                        $record->user->deletion_requested_at && ! $record->isAnonymised() ? 'Deletion requested' : null,
                         $record->user->isDeactivated() ? 'Deactivated' : null,
                     ])))
-                    ->color(fn (string $state) => $state === 'Deactivated' ? 'gray' : 'danger'),
+                    ->color(fn (string $state) => $state === 'Deletion requested' ? 'danger' : 'gray'),
+            ])
+            ->filters([
+                // BR-1.6: the dashboard's "Deletion requests" links here.
+                Filter::make('deletion_requested')
+                    ->label('Deletion requested')
+                    ->toggle()
+                    ->query(fn (Builder $query) => $query->scopes(['deletionRequested'])),
             ])
             ->recordActions([
                 ViewAction::make(),

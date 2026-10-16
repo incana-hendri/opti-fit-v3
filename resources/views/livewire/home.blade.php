@@ -64,11 +64,19 @@
                 </div>
             </a>
         @empty
-            <x-card class="text-muted">Nothing booked yet.</x-card>
+            <x-empty-state title="Nothing booked yet" icon="heroicon-o-ticket">
+                Your next classes show up here.
+                <x-slot:action>
+                    <x-button href="{{ route('book') }}" size="lg">Book a class</x-button>
+                </x-slot:action>
+            </x-empty-state>
         @endforelse
     </section>
 
-    <x-button href="{{ route('book') }}" size="lg" block>Book a class</x-button>
+    {{-- The empty state above already offers this button. --}}
+    @if ($nextUp->isNotEmpty())
+        <x-button href="{{ route('book') }}" size="lg" block>Book a class</x-button>
+    @endif
 
     @if ($idleMembers->isNotEmpty())
         <p class="text-center text-sm text-muted">

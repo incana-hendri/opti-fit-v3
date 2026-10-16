@@ -166,7 +166,7 @@ it('leaves out cancelled bookings and other households from Next up (BR-2.7)', f
 
     app(CancelBooking::class)->handle($mine, $user);
 
-    Livewire::actingAs($user)->test(Home::class)->assertSee('Nothing booked yet.')->assertDontSee('Shared class');
+    Livewire::actingAs($user)->test(Home::class)->assertSee('Nothing booked yet')->assertDontSee('Shared class');
 });
 
 it('hints at covered members with no class booked this week (docs/04)', function () {

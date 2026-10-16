@@ -63,7 +63,8 @@ Top to bottom:
    "No package yet → Choose a package", or "Request pending: we'll email you once approved".
    If the membership is ending: "Your membership ends on 31 Oct · Undo".
 2. **Next up:** the next three bookings as cards (day, time, title, member chips), each with a link to Bookings.
-3. **Book a class** button (full width, orange).
+   With no bookings it is an empty state that holds the "Book a class" button.
+3. **Book a class** button (full width, orange), under the bookings.
 4. If not all covered members have a booking this week, a gentle hint: "Mia has no class booked this week."
 
 ## `/book` (the most important screen)

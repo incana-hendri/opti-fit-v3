@@ -19,8 +19,8 @@ side. Never write credit entries directly from Filament code.
 ## Dashboard
 
 Widgets, in order:
-1. **Today's classes:** each session today and tomorrow, with time, title, booked/capacity, and a
-   "below minimum" warning. Clicking opens the roster.
+1. **Today's classes:** each scheduled session today and tomorrow, with time, title, booked/capacity, and a
+   "below minimum" warning (until the class starts). Clicking opens the roster.
 2. **Needs attention:** count and link for pending membership requests, deletion requests, and
    memberships ending this month.
 3. **This month:** active memberships, expected monthly income (sum of `monthly_price_cents` of active),
@@ -87,8 +87,9 @@ Simple CRUD with the archive rule BR-9.2.
 - Delete is visible only when it's allowed (BR-3.4). Otherwise there's an "Archive" toggle. The table is reorderable by `sort_order`.
 
 ## Admins (`UserResource` scoped to `role = admin`)
-Create admin (name, email, password or "send invite/reset link"), deactivate. An admin can't deactivate
-themselves, and there must always be at least one active admin.
+Create admin (name, email, optional phone, password or "send a set-password link"), deactivate and reactivate.
+An admin can't deactivate themselves, and there must always be at least one active admin. There is no edit and
+no delete: an admin who leaves is deactivated.
 
 ## Settings (custom Filament page)
 The BR-9.1 fields in one form.

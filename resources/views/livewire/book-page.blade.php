@@ -23,6 +23,14 @@
         </x-status-card>
     @endif
 
+    @if ($sessionsByDay->isEmpty())
+        <x-empty-state title="No classes to book right now" icon="heroicon-o-calendar-days">
+            New classes show up here as the studio schedules them. Check back soon.
+            <x-slot:action>
+                <x-button href="{{ route('bookings') }}" variant="secondary">See my bookings</x-button>
+            </x-slot:action>
+        </x-empty-state>
+    @else
     {{-- Sticky under the header so any day is one tap away while scrolling. --}}
     <div class="sticky top-14 z-20 -mx-4 bg-night/95 px-4 py-2 backdrop-blur lg:top-16 lg:mx-0 lg:px-0">
         <x-day-strip :days="$days" :selected="today()" />
@@ -59,6 +67,7 @@
             @endforelse
         </section>
     @endforeach
+    @endif
 
     @php($sheetTitle = $sheet ? 'Book '.$sheet['session']->title : 'Book a class')
     <x-sheet name="book" :title="$sheetTitle">

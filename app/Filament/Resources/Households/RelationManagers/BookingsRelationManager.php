@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Households\RelationManagers;
 
+use App\Filament\Concerns\RefreshesWithPage;
 use App\Filament\Resources\ClassSessions\Actions\BookingActions;
 use App\Models\Booking;
 use App\Models\ClassSession;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 // The Bookings tab (docs/05 § Households): upcoming and past bookings across the members, with the roster's row actions.
 class BookingsRelationManager extends RelationManager
 {
+    use RefreshesWithPage;
+
     protected static string $relationship = 'bookings';
 
     protected static ?string $title = 'Bookings';

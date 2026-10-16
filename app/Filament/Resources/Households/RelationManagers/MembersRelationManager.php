@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Households\RelationManagers;
 
 use App\Enums\Gender;
+use App\Filament\Concerns\RefreshesWithPage;
 use App\Models\Member;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -21,6 +22,8 @@ use Filament\Tables\Table;
 // The Members tab (docs/05 § Households): admins edit members, including health notes, and archive them.
 class MembersRelationManager extends RelationManager
 {
+    use RefreshesWithPage;
+
     protected static string $relationship = 'members';
 
     // Relation managers on a view page are read-only by default; admins do edit members here.

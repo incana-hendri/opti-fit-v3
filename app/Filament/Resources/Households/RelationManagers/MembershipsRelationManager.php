@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Households\RelationManagers;
 
+use App\Filament\Concerns\RefreshesWithPage;
 use App\Models\Membership;
 use App\Support\Money;
 use App\Support\Period;
@@ -13,6 +14,8 @@ use Filament\Tables\Table;
 // Approving, pausing and the rest happen on the Memberships page.
 class MembershipsRelationManager extends RelationManager
 {
+    use RefreshesWithPage;
+
     protected static string $relationship = 'memberships';
 
     public function table(Table $table): Table

@@ -8,7 +8,7 @@ Families sign up, add their members, and request a monthly package. The studio a
 request and the family receives a monthly pool of credits. One credit books one person into one
 class. Credits expire at month end.
 
-> **Status:** Milestones 0–3 done. Next is M4, dashboard, reports and polish.
+> **Status:** Milestones 0–4 done. Next is M5, import and launch readiness.
 > Start with `AGENTS.md`, then `docs/10-milestones.md`.
 
 ## Repository map
@@ -49,21 +49,23 @@ cp .env.example .env
 - Customer site: http://localhost
 - Admin panel: http://localhost/admin
 - Mailpit (outgoing mail): http://localhost:8025
-- Component styleguide (not in production): http://localhost/_styleguide
+- Component styleguide (not in production): http://localhost/_styleguide; error page previews: http://localhost/_styleguide/errors/500 (also 403, 404, 419, 503)
 - Public timetable: http://localhost/timetable
+- Admin dashboard, reports (with a CSV of the month's sessions), settings and admins: http://localhost/admin
 - Tests: `./vendor/bin/sail composer test` (includes `tests/Concurrency`, which starts real PHP processes to prove two bookings can't take the last place) · style: `sail composer lint` · static analysis: `sail composer analyse`
 
 ## Demo data
 
-For local development and screenshots, add an admin, three demo households (one active, one with a pending
-request, one ending this month), two weeks of sessions from the timetable templates and some bookings:
+For local development and screenshots, add two admins, four demo households (one active, one with a pending
+request, one ending this month, one that asked for its account to be deleted), last month's classes with
+attendance, two weeks of sessions from the timetable templates and some bookings:
 
 ```bash
 ./vendor/bin/sail artisan db:seed --class=DemoSeeder
 ```
 
-Log in with `admin@optifit.test` (admin panel) or `smith@optifit.test`, `jones@optifit.test`, `botha@optifit.test`;
-the password is `password`. It refuses to run in production. The Smith family has bookings (including a class where everyone is booked), a no-show and a late cancellation; one class is full, one has a guest, and a class later today is below its minimum.
+Log in with `admin@optifit.test` or `owner@optifit.test` (admin panel) or `smith@optifit.test`, `jones@optifit.test`,
+`botha@optifit.test`, `pretorius@optifit.test`; the password is `password`. It refuses to run in production. The Smith family has bookings (including a class where everyone is booked), a no-show and a late cancellation; one class is full, one has a guest, and a class later today is below its minimum.
 
 The monthly credits job (`sail artisan optifit:monthly-credits`) runs daily at 00:05 through the scheduler and is safe to run by hand.
 `sail artisan optifit:below-minimum` runs daily at 06:00 and emails the admins (Mailpit locally) when a class today is below its minimum; it sends nothing otherwise.

@@ -22,7 +22,7 @@
         <div role="tabpanel" id="panel-upcoming" aria-labelledby="tab-upcoming" class="space-y-4">
             @forelse ($upcoming as $session)
                 @php($cutoffPassed = Cutoff::hasPassed($session))
-                <x-card as="section" wire:key="upcoming-{{ $session->id }}" aria-labelledby="upcoming-title-{{ $session->id }}" class="space-y-3">
+                <x-card as="article" wire:key="upcoming-{{ $session->id }}" aria-labelledby="upcoming-title-{{ $session->id }}" class="space-y-3">
                     <div>
                         <p class="text-sm text-muted">{{ $session->starts_at->format('l j M') }}</p>
                         <h2 id="upcoming-title-{{ $session->id }}" class="text-lg">
@@ -63,7 +63,7 @@
     @else
         <div role="tabpanel" id="panel-past" aria-labelledby="tab-past" class="space-y-4">
             @forelse ($past as $session)
-                <x-card as="section" wire:key="past-{{ $session->id }}" aria-labelledby="past-title-{{ $session->id }}" class="space-y-3">
+                <x-card as="article" wire:key="past-{{ $session->id }}" aria-labelledby="past-title-{{ $session->id }}" class="space-y-3">
                     <div>
                         <p class="text-sm text-muted">{{ $session->starts_at->format('l j M') }}</p>
                         <h2 id="past-title-{{ $session->id }}" class="text-lg">

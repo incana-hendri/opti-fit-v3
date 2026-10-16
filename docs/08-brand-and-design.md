@@ -38,7 +38,7 @@ Defined as CSS custom properties in `brand/tokens.css` and mapped into Tailwind 
 | `--of-text-subtle` | `#9A96A8` | Tertiary text, placeholders (≥ 4.5:1 on night) |
 | `--of-success` | `#2ED573` | Places available, success toasts, "Attended" |
 | `--of-danger` | `#FF4757` | Errors, destructive actions, "Full" |
-| `--of-info` | `#5B7CFA` | Informational badges (sparingly) |
+| `--of-info` | `#7B95FF` | Informational badges (sparingly); ≥ 4.5:1 as text on its own 15% tint |
 | `--of-ink` | `#0D0918` | **Text on orange**. White on orange fails contrast, so orange buttons always use night text |
 
 Light surfaces (emails, print) use white `#FFFFFF`, page `#F4F3F7`, text `#1A1A1A`, muted `#555555`, and
@@ -71,5 +71,5 @@ Set `<meta name="color-scheme" content="dark">` and `theme-color` `#0D0918`.
 
 `x-button` (primary/secondary/ghost/danger, sizes) · `x-card` · `x-badge` · `x-input`, `x-select`, `x-checkbox`, `x-radio-card` ·
 `x-sheet` (bottom sheet/modal) · `x-toast` · `x-empty-state` · `x-credit-meter` · `x-status-card` · `x-session-card` · `x-places-badge` · `x-timetable-list` · `x-day-strip` ·
-`x-member-chip` · `x-tab-bar` · `x-page-header`. Build a hidden local-only `/_styleguide` route that renders them
+`x-member-chip` · `x-tab-bar` · `x-page-header` · `x-error-page` (the 403/404/419/500/503 pages; it reads no database). Build a hidden local-only `/_styleguide` route that renders them
 all, for visual QA (disabled in production).

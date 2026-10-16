@@ -14,11 +14,12 @@
                    @class([
                        'relative flex w-14 flex-col items-center rounded-2xl border py-2 transition-colors duration-150',
                        'border-brand bg-brand text-ink' => $isSelected,
-                       'border-line bg-surface hover:bg-raised' => ! $isSelected,
-                       'opacity-50' => ! $day['hasSessions'] && ! $isSelected,
+                       'border-line bg-surface hover:bg-raised' => ! $isSelected && $day['hasSessions'],
+                       // Days without classes are dimmed with a lighter fill, never with opacity, so the text keeps its contrast.
+                       'border-line bg-transparent hover:bg-surface' => ! $isSelected && ! $day['hasSessions'],
                    ])>
                     <span class="text-xs font-medium {{ $isSelected ? '' : 'text-subtle' }}">{{ $day['date']->format('D') }}</span>
-                    <span class="text-lg font-semibold tabular-nums">{{ $day['date']->format('j') }}</span>
+                    <span @class(['text-lg tabular-nums', 'font-semibold' => $isSelected || $day['hasSessions'], 'text-subtle' => ! $isSelected && ! $day['hasSessions']])>{{ $day['date']->format('j') }}</span>
                     <span aria-hidden="true" @class([
                         'mt-0.5 size-1.5 rounded-full',
                         'bg-ink' => $isSelected && $day['hasSessions'],

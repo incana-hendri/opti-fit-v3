@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ClassSessions\RelationManagers;
 
 use App\Enums\BookingStatus;
+use App\Filament\Concerns\RefreshesWithPage;
 use App\Filament\Resources\ClassSessions\Actions\BookingActions;
 use App\Models\Booking;
 use Filament\Actions\ActionGroup;
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Builder;
 // The roster's Bookings table (docs/05 § Sessions): who is coming, health notes, attendance and credits.
 class BookingsRelationManager extends RelationManager
 {
+    use RefreshesWithPage;
+
     protected static string $relationship = 'bookings';
 
     protected static ?string $title = 'Bookings';

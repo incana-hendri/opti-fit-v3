@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Households\RelationManagers;
 use App\Actions\Credits\AdjustCredits;
 use App\Enums\CreditEntryType;
 use App\Exceptions\CreditException;
+use App\Filament\Concerns\RefreshesWithPage;
 use App\Models\CreditEntry;
 use App\Models\Household;
 use App\Models\User;
@@ -25,6 +26,8 @@ use Illuminate\Support\Facades\Auth;
 // The Credits tab (docs/05 § Households): the current balance, the whole ledger, and "Adjust credits" (BR-6.5).
 class CreditsRelationManager extends RelationManager
 {
+    use RefreshesWithPage;
+
     protected static string $relationship = 'creditEntries';
 
     protected static ?string $title = 'Credits';

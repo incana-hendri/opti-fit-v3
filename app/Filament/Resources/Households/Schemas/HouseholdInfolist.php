@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Households\Schemas;
 
+use App\Models\Household;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 // The Overview tab (docs/05 § Households).
 class HouseholdInfolist
@@ -15,6 +17,14 @@ class HouseholdInfolist
         return $schema
             ->columns(['default' => 1, 'lg' => 2])
             ->components([
+                Section::make('Anonymised')
+                    ->icon(Heroicon::OutlinedShieldCheck)
+                    ->columnSpanFull()
+                    ->visible(fn (Household $record) => $record->isAnonymised())
+                    ->description('The personal data of this household was removed (BR-9.6). The credit history and past bookings are kept for the reports.')
+                    ->schema([
+                        TextEntry::make('anonymised_at')->label('Anonymised on')->dateTime('j M Y, H:i'),
+                    ]),
                 Section::make('Account holder')
                     ->columns(2)
                     ->schema([
